@@ -12,11 +12,18 @@
     <Page.BottomAppBar>
         <CommandBar>
             <AppBarButton Label="Cancel" Icon="Cancel" Click="ButtonBase_OnClick"/>
-            <AppBarButton Label="OK" Icon="Accept" Click="ButtonBase_OnClick"/>
+            <AppBarButton Label="OK" Icon="Accept" Click="Accept_OnClick"/>
         </CommandBar>
     </Page.BottomAppBar>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+        <ColorPicker x:Name="MyColorPicker"
+            VerticalAlignment="Center"
+            IsColorSliderVisible="True"
+            IsColorChannelTextInputVisible="True"
+            IsHexInputVisible="True"
+            IsAlphaEnabled="False"
+            IsAlphaSliderVisible="True"
+            IsAlphaTextInputVisible="True" />
     </Grid>
 </Page>

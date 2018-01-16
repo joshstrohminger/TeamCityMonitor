@@ -17,9 +17,10 @@
         </CommandBar>
     </Page.BottomAppBar>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Button Click="Color_OnClick">
-            <Rectangle Width="50" Height="50" Fill="Green"/>
+            <Rectangle x:Name="MyRectangle" Width="50" Height="50" Fill="Green"/>
         </Button>
-    </Grid>
+        <TextBlock x:Name="MyBrightness"/>
+    </StackPanel>
 </Page>
