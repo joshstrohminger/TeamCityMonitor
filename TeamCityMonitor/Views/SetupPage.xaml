@@ -1,0 +1,25 @@
+﻿<Page
+    x:Class="TeamCityMonitor.Views.SetupPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:TeamCityMonitor.Views"
+    xmlns:extensions="using:Microsoft.Toolkit.Uwp.UI.Extensions"
+    extensions:ApplicationView.Title="Setup"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.BottomAppBar>
+        <CommandBar>
+            <AppBarButton Label="Remove" Icon="Delete"/>
+            <AppBarButton Label="Add" Icon="Add"/>
+            <AppBarButton Label="Monitor" Icon="Play" Click="Monitor_OnClick"/>
+        </CommandBar>
+    </Page.BottomAppBar>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Button Click="Color_OnClick">
+            <Rectangle Width="50" Height="50" Fill="Green"/>
+        </Button>
+    </Grid>
+</Page>
