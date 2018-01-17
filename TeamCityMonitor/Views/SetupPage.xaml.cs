@@ -70,10 +70,15 @@ namespace TeamCityMonitor.Views
             MyColorPicker.Color = _change.WorkingColor;
         }
 
-        private void BlueButton_OnClick(object sender, RoutedEventArgs e)
+        private void ColorButton_OnClick(object sender, RoutedEventArgs e)
         {
-            _change = new ColorChangeViewModel(((SolidColorBrush) MyRectangle2.Fill).Color,
-                (byte) BrightnessSlider.Value) {Source = (Rectangle) ((Button) sender).Content};
+            var button = (Button) sender;
+            var rectangle = (Rectangle) button.Content;
+            var brush = (SolidColorBrush) rectangle.Fill;
+            _change = new ColorChangeViewModel(brush.Color, (byte) BrightnessSlider.Value)
+            {
+                Source = rectangle
+            };
         }
 
         private ColorChangeViewModel _change;

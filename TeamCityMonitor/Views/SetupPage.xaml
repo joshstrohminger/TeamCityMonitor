@@ -39,9 +39,24 @@
             <Rectangle x:Name="MyRectangle" Width="50" Height="50" Fill="Green"/>
         </Button>
         <TextBlock x:Name="MyBrightness"/>
-        <Button Margin="0,10,0,0" Flyout="{StaticResource ColorFlyout}" x:Name="BlueButton" Click="BlueButton_OnClick">
-            <Rectangle x:Name="MyRectangle2" Width="50" Height="50" Fill="Blue"/>
-        </Button>
+        <ItemsControl Margin="0,20,0,0">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Button Flyout="{StaticResource ColorFlyout}" Click="ColorButton_OnClick">
+                        <Rectangle Margin="10" Width="50" Height="50" Fill="{Binding}"/>
+                    </Button>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <SolidColorBrush>Green</SolidColorBrush>
+            <SolidColorBrush>Red</SolidColorBrush>
+            <SolidColorBrush>Yellow</SolidColorBrush>
+            <SolidColorBrush>Blue</SolidColorBrush>
+        </ItemsControl>
         <StackPanel Orientation="Horizontal">
             <Slider VerticalAlignment="Center" TickPlacement="None" x:Name="BrightnessSlider" Value="50" Minimum="0" Maximum="100" StepFrequency="1" SnapsTo="StepValues" Width="200"/>
             <TextBlock Text="{Binding Value, ElementName=BrightnessSlider}" VerticalAlignment="Center" Margin="5"/>
