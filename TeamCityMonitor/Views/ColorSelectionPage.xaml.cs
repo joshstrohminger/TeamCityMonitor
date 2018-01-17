@@ -38,43 +38,20 @@ namespace TeamCityMonitor.Views
         {
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             base.OnNavigatedTo(e);
-
-            if (e.Parameter is IColorChangeViewModel vm)
-            {
-                _vm = vm;
-                _vm.Accepted = false;
-                var hsv = _vm.OriginalColor.ToHsv();
-                MyColorPicker.Color = ColorHelper.FromHsv(hsv.H, hsv.S, _vm.OriginalBrightness / 100d);
-            }
-            else
-            {
-                _vm = null;
-                new MessageDialog("Color not passed", "Invalid parameter").ShowAsync();
-            }
+            
+            _vm = (IColorChangeViewModel) e.Parameter ?? throw new ArgumentNullException(nameof(e.Parameter));
+            MyColorPicker.Color = _vm.WorkingColor;
         }
 
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
-            if (Frame.CanGoBack)
-            {
-                Frame.GoBack();
-            }
+            Frame.GoBack();
         }
 
         private void Accept_OnClick(object sender, RoutedEventArgs e)
         {
-            if (_vm != null)
-            {
-                var hsv = MyColorPicker.Color.ToHsv();
-                _vm.NewBrightness = (byte)Math.Round(hsv.V * 100, MidpointRounding.AwayFromZero);
-                _vm.NewColor = ColorHelper.FromHsv(hsv.H, hsv.S, 1);
-                _vm.Accepted = true;
-            }
-            
-            if (Frame.CanGoBack)
-            {
-                Frame.GoBack();
-            }
+            _vm.ChangeColor(MyColorPicker.Color);
+            Frame.GoBack();
         }
     }
 }

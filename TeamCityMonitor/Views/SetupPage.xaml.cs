@@ -32,17 +32,12 @@ namespace TeamCityMonitor.Views
             }
         }
 
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            base.OnNavigatedFrom(e);
-        }
-
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             base.OnNavigatedTo(e);
-
-            if (_colorChange != null && _colorChange.Accepted)
+            
+            if (e.NavigationMode == NavigationMode.Back && _colorChange?.Accepted == true)
             {
                 _brightness = _colorChange.NewBrightness;
                 MyBrightness.Text = _brightness.ToString();

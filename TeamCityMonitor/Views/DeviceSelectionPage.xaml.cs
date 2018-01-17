@@ -23,7 +23,7 @@ namespace TeamCityMonitor.Views
 
         private void Forward_OnClick(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(SetupPage));
+            Frame.Navigate(typeof(SetupPage), "device 2");
         }
     }
 }
