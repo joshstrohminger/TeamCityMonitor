@@ -1,5 +1,6 @@
 ﻿using System;
 using Windows.UI;
+using Windows.UI.Xaml.Shapes;
 using Interfaces;
 using Microsoft.Toolkit.Uwp.Helpers;
 using ColorHelper = Microsoft.Toolkit.Uwp.Helpers.ColorHelper;
@@ -14,6 +15,7 @@ namespace TeamCityMonitor.ViewModels
         public Color NewColor { get; private set; }
         public byte NewBrightness { get; private set; }
         public bool Accepted { get; private set; }
+        public Rectangle Source { get; set; }
 
         public ColorChangeViewModel(Color color, byte brightness)
         {

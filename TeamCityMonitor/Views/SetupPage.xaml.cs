@@ -1,8 +1,12 @@
-﻿using Windows.UI.Core;
+﻿using System;
+using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Shapes;
 using Interfaces;
 using TeamCityMonitor.ViewModels;
 
@@ -59,6 +63,35 @@ namespace TeamCityMonitor.Views
                 _colorChange = new ColorChangeViewModel(brush.Color, _brightness);
                 Frame.Navigate(typeof(ColorSelectionPage), _colorChange);
             }
+        }
+
+        private void ColorFlyout_OnOpening(object sender, object e)
+        {
+            MyColorPicker.Color = _change.WorkingColor;
+        }
+
+        private void BlueButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            _change = new ColorChangeViewModel(((SolidColorBrush) MyRectangle2.Fill).Color,
+                (byte) BrightnessSlider.Value) {Source = (Rectangle) ((Button) sender).Content};
+        }
+
+        private ColorChangeViewModel _change;
+
+        private void ColorAccepted_OnClick(object sender, RoutedEventArgs e)
+        {
+            _change.ChangeColor(MyColorPicker.Color);
+            ColorFlyout.Hide();
+        }
+
+        private void ColorFlyout_OnClosing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
+        {
+            if (_change?.Accepted == true)
+            {
+                _change.Source.Fill = new SolidColorBrush(_change.NewColor);
+                BrightnessSlider.Value = _change.NewBrightness;
+            }
+            _change = null;
         }
     }
 }
