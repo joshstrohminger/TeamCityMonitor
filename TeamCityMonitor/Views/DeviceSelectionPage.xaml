@@ -7,17 +7,49 @@
     extensions:ApplicationView.Title="Select Device"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="using:TeamCityMonitor.Converters"
     mc:Ignorable="d"
     NavigationCacheMode="Required">
     
     <Page.BottomAppBar>
         <CommandBar>
-            <AppBarButton Label="Refresh" Icon="Refresh"/>
-            <AppBarButton Label="Connect" Icon="Forward" Click="Forward_OnClick"/>
+            <AppBarButton Label="Refresh" Icon="Refresh" Command="{x:Bind RefreshDevices}"/>
+            <AppBarButton Label="Connect" Icon="Forward" Command="{x:Bind OpenDevice}" CommandParameter="{x:Bind DeviceList.SelectedValue}"/>
         </CommandBar>
     </Page.BottomAppBar>
+    
+    <Page.Resources>
+        <converters:HideIfNullConverter x:Name="HideIfNull"/>
+    </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <ListView Grid.Column="0" ItemsSource="{x:Bind Devices}" x:Name="DeviceList">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <TextBlock>
+                            <Run Text="{Binding ManufacturerName}"/>
+                            <Run Text=" - "/>
+                            <Run Text="{Binding ProductName}"/>
+                        </TextBlock>
+                        <TextBlock Text="{Binding InfoBlock1}" Visibility="{Binding InfoBlock1, Converter={StaticResource HideIfNull}}"/>
+                        <TextBlock Text="{Binding InfoBlock2}" Visibility="{Binding InfoBlock2, Converter={StaticResource HideIfNull}}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <StackPanel Grid.Column="1" DataContext="{Binding ElementName=DeviceList, Path=SelectedValue}">
+            <TextBlock>
+                <Run Text="{Binding ManufacturerName}"/>
+                <Run Text=" - "/>
+                <Run Text="{Binding ProductName}"/>
+            </TextBlock>
+            <TextBlock Text="{Binding InfoBlock1}" Visibility="{Binding InfoBlock1, Converter={StaticResource HideIfNull}}"/>
+            <TextBlock Text="{Binding InfoBlock2}" Visibility="{Binding InfoBlock2, Converter={StaticResource HideIfNull}}"/>
+        </StackPanel>
     </Grid>
 </Page>

@@ -7,6 +7,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
+using BlinkStickDotNet;
 using Interfaces;
 using TeamCityMonitor.ViewModels;
 
@@ -19,6 +20,9 @@ namespace TeamCityMonitor.Views
     {
         private byte _brightness = 100;
         private IColorChangeViewModel _colorChange;
+
+        public BlinkStick Device { get; private set; }
+
         public SetupPage()
         {
             InitializeComponent();
@@ -46,6 +50,12 @@ namespace TeamCityMonitor.Views
                 _brightness = _colorChange.NewBrightness;
                 MyBrightness.Text = _brightness.ToString();
                 MyRectangle.Fill = new SolidColorBrush(_colorChange.NewColor);
+                Device.SetColor(_colorChange.NewColor.R, _colorChange.NewColor.G, _colorChange.NewColor.B);
+            }
+            else if (e.NavigationMode == NavigationMode.New)
+            {
+                Device = (BlinkStick) e.Parameter ?? throw new ArgumentNullException(nameof(e.Parameter));
+                Device.OpenDevice();
             }
             _colorChange = null;
         }
