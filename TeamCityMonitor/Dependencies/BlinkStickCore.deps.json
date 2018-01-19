@@ -1,0 +1,50 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v2.0",
+    "signature": "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v2.0": {
+      "BlinkStickCore/1.0.0": {
+        "dependencies": {
+          "HidSharp": "1.0.0",
+          "LibUsbDotNet": "1.0.0"
+        },
+        "runtime": {
+          "BlinkStickCore.dll": {}
+        }
+      },
+      "HidSharp/1.0.0": {
+        "dependencies": {
+          "LibUsbDotNet": "1.0.0"
+        },
+        "runtime": {
+          "HidSharp.dll": {}
+        }
+      },
+      "LibUsbDotNet/1.0.0": {
+        "runtime": {
+          "LibUsbDotNet.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "BlinkStickCore/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "HidSharp/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "LibUsbDotNet/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

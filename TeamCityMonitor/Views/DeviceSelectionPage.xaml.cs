@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+using Windows.Devices.Enumeration;
+using Windows.Devices.HumanInterfaceDevice;
+using Windows.Storage;
 using Windows.UI.Core;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using BlinkStickDotNet;
+using BlinkStickCore;
 using MVVM;
 
 namespace TeamCityMonitor.Views
@@ -21,13 +25,47 @@ namespace TeamCityMonitor.Views
             InitializeComponent();
         }
 
-        private void ExecuteRefreshDevices()
+        private async void ExecuteRefreshDevices()
         {
-            Devices.Clear();
-            foreach (var device in BlinkStick.FindAll())
+            ushort vendorId = 0x20A0;
+            ushort productId = 0x41E5;
+            ushort usagePage = 0xFF00;
+            ushort usageId = 0x0001;
+
+            // Create a selector that gets a HID device using VID/PID and a 
+            // VendorDefined usage
+            string selector = HidDevice.GetDeviceSelector(usagePage, usageId,
+                vendorId, productId);
+            
+            // Enumerate devices using the selector
+            var devices = await DeviceInformation.FindAllAsync(selector);
+
+            if (devices.Count > 0)
             {
-                Devices.Add(device);
+                var d = devices.ElementAt(0);
+                // Open the target HID device
+                HidDevice device = await HidDevice.FromIdAsync(d.Id, FileAccessMode.ReadWrite);
+                if (device == null)
+                {
+                    var i = DeviceAccessInformation.CreateFromId(d.Id);
+                    //DeviceAccessInformation.CurrentStatus()
+                    var s = i.CurrentStatus;
+
+                    i = DeviceAccessInformation.CreateFromDeviceClassId(new Guid("{745A17A0-74D3-11D0-B6FE-00A0C90F57DA}"));
+                    s = i.CurrentStatus;
+                }
+
+                // At this point the device is available to communicate with
+                // So we can send/receive HID reports from it or 
+                // query it for control descriptions
+                device?.Dispose();
             }
+
+            //Devices.Clear();
+            //foreach (var device in BlinkStick.FindAll())
+            //{
+            //    Devices.Add(device);
+            //}
         }
 
         private bool CanExecuteOpenDevice(BlinkStick blinkStick)

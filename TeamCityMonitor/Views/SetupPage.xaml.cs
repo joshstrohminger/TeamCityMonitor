@@ -1,5 +1,4 @@
 ﻿using System;
-using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -7,7 +6,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
-using BlinkStickDotNet;
+using BlinkStickCore;
 using Interfaces;
 using TeamCityMonitor.ViewModels;
 
