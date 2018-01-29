@@ -43,11 +43,11 @@ namespace TeamCityMonitor.Views
             if (devices.Count > 0)
             {
                 var d = devices.ElementAt(0);
+                var i = DeviceAccessInformation.CreateFromId(d.Id);
                 // Open the target HID device
                 HidDevice device = await HidDevice.FromIdAsync(d.Id, FileAccessMode.ReadWrite);
                 if (device == null)
                 {
-                    var i = DeviceAccessInformation.CreateFromId(d.Id);
                     //DeviceAccessInformation.CurrentStatus()
                     var s = i.CurrentStatus;
 

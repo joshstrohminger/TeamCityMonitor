@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2020
+VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamCityMonitor", "TeamCityMonitor\TeamCityMonitor.csproj", "{E2BBAAFC-777F-456C-9EEC-1C902E5257EE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVVM", "MVVM\MVVM.csproj", "{B41C688E-6DAB-42E2-8BE7-3F9E1C2FAEAC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Interfaces", "Interfaces\Interfaces.csproj", "{E4E78C23-9F24-44DA-81F6-462425A68AAF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlinkStickUniversal", "BlinkStickUniversal\BlinkStickUniversal.csproj", "{17BECB9D-D8B1-4D67-86F5-34536A34D6BB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,6 +75,22 @@ Global
 		{E4E78C23-9F24-44DA-81F6-462425A68AAF}.Release|x64.Build.0 = Release|x64
 		{E4E78C23-9F24-44DA-81F6-462425A68AAF}.Release|x86.ActiveCfg = Release|x86
 		{E4E78C23-9F24-44DA-81F6-462425A68AAF}.Release|x86.Build.0 = Release|x86
+		{17BECB9D-D8B1-4D67-86F5-34536A34D6BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17BECB9D-D8B1-4D67-86F5-34536A34D6BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17BECB9D-D8B1-4D67-86F5-34536A34D6BB}.Debug|ARM.ActiveCfg = Debug|ARM
+		{17BECB9D-D8B1-4D67-86F5-34536A34D6BB}.Debug|ARM.Build.0 = Debug|ARM
+		{17BECB9D-D8B1-4D67-86F5-34536A34D6BB}.Debug|x64.ActiveCfg = Debug|x64
+		{17BECB9D-D8B1-4D67-86F5-34536A34D6BB}.Debug|x64.Build.0 = Debug|x64
+		{17BECB9D-D8B1-4D67-86F5-34536A34D6BB}.Debug|x86.ActiveCfg = Debug|x86
+		{17BECB9D-D8B1-4D67-86F5-34536A34D6BB}.Debug|x86.Build.0 = Debug|x86
+		{17BECB9D-D8B1-4D67-86F5-34536A34D6BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17BECB9D-D8B1-4D67-86F5-34536A34D6BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17BECB9D-D8B1-4D67-86F5-34536A34D6BB}.Release|ARM.ActiveCfg = Release|ARM
+		{17BECB9D-D8B1-4D67-86F5-34536A34D6BB}.Release|ARM.Build.0 = Release|ARM
+		{17BECB9D-D8B1-4D67-86F5-34536A34D6BB}.Release|x64.ActiveCfg = Release|x64
+		{17BECB9D-D8B1-4D67-86F5-34536A34D6BB}.Release|x64.Build.0 = Release|x64
+		{17BECB9D-D8B1-4D67-86F5-34536A34D6BB}.Release|x86.ActiveCfg = Release|x86
+		{17BECB9D-D8B1-4D67-86F5-34536A34D6BB}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
