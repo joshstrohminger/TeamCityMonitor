@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
@@ -12,18 +12,28 @@ namespace BlinkStickUniversal
     {
         #region Fields
 
+        protected const int UsagePage = 0xFF00;
+        protected const int UsageId = 0x0001;
         protected const int VendorId = 0x20A0;
         protected const int ProductId = 0x41E5;
 
-        private DeviceInformation _info;
+        private readonly DeviceInformation _info;
         private HidDevice _device;
         private bool _stopped;
 
         #endregion
-        
+
+        #region Events
+
+        public delegate void ErrorHandler(string msg, Exception e);
+        public event ErrorHandler OnError;
+
+        #endregion Events
+
         #region Device Properties
+
         /// <value><c>true</c> if connected; otherwise, <c>false</c>.</value>
-        public bool Connected { get; private set; }
+        public bool Connected => _device != null;
 
         /// <summary>
         /// Gets the device type
@@ -42,15 +52,33 @@ namespace BlinkStickUniversal
             {
                 if (_infoBlock1 != null) return _infoBlock1;
                 var getInfoBlockTask = Task.Run(async () => await GetInfoBlockAsStringAsync(2));
-                _infoBlock1 = getInfoBlockTask.Result;
+                getInfoBlockTask.Wait();
+                if (getInfoBlockTask.IsFaulted)
+                {
+                    _infoBlock1 = null;
+                    OnError?.Invoke($"Failed to get {nameof(InfoBlock1)}", getInfoBlockTask.Exception);
+                }
+                else
+                {
+                    _infoBlock1 = getInfoBlockTask.Result;
+                }
                 return _infoBlock1;
             }
             set
             {
                 if (_infoBlock1 == value) return;
+                var previousValue = _infoBlock1;
                 _infoBlock1 = value;
-                Task.Run(async () => {
+                Task.Run(async () =>
+                {
                     await SetInfoBlockAsync(2, _infoBlock1);
+                }).ContinueWith(task =>
+                {
+                    if (task.IsFaulted)
+                    {
+                        OnError?.Invoke($"Failed to set {nameof(InfoBlock1)}, resetting to {previousValue}", task.Exception);
+                        _infoBlock1 = previousValue;
+                    }
                 });
             }
         }
@@ -66,15 +94,32 @@ namespace BlinkStickUniversal
             {
                 if (_infoBlock2 != null) return _infoBlock2;
                 var getInfoBlockTask = Task.Run(async () => await GetInfoBlockAsStringAsync(3));
-                _infoBlock2 = getInfoBlockTask.Result;
+                getInfoBlockTask.Wait();
+                if (getInfoBlockTask.IsFaulted)
+                {
+                    _infoBlock2 = null;
+                    OnError?.Invoke($"Failed to get {nameof(InfoBlock2)}", getInfoBlockTask.Exception);
+                }
+                else
+                {
+                    _infoBlock2 = getInfoBlockTask.Result;
+                }
                 return _infoBlock2;
             }
             set
             {
                 if (_infoBlock2 == value) return;
+                var previousValue = _infoBlock2;
                 _infoBlock2 = value;
                 Task.Run(async () => {
                     await SetInfoBlockAsync(3, _infoBlock2);
+                }).ContinueWith(task =>
+                {
+                    if (task.IsFaulted)
+                    {
+                        OnError?.Invoke($"Failed to set {nameof(InfoBlock2)}, resetting to {previousValue}", task.Exception);
+                        _infoBlock2 = previousValue;
+                    }
                 });
             }
         }
@@ -98,21 +143,34 @@ namespace BlinkStickUniversal
                 });
 
                 _mode = getModeTask.Result;
-
                 return _mode;
             }
             set
             {
                 if (_mode == value) return;
+                var previousValue = _mode;
                 _mode = value;
                 Task.Run(async () => {
                     await SetModeAsync((byte)_mode);
+                }).ContinueWith(task =>
+                {
+                    if (task.IsFaulted)
+                    {
+                        OnError?.Invoke($"Failed to set {nameof(Mode)}, resetting to {previousValue}", task.Exception);
+                        _mode = previousValue;
+                    }
                 });
             }
         }
         #endregion
         
         #region Device Open/Close functions
+
+        public BlinkStick(DeviceInformation info)
+        {
+            _info = info;
+        }
+
         /// <summary>
         /// Attempts to connect to a BlinkStick device.
         /// 
@@ -133,27 +191,12 @@ namespace BlinkStickUniversal
         }
 
         /// <summary>
-        /// Opens the device.
-        /// </summary>
-        /// <returns><c>true</c>, if device was opened, <c>false</c> otherwise.</returns>
-        public async Task<bool> OpenDevice(DeviceInformation info)
-        {
-            if (info == null) return false;
-            _info = info;
-                
-            return await OpenCurrentDevice();
-        }
-
-        /// <summary>
         /// Opens the current device.
         /// </summary>
         /// <returns><c>true</c>, if current device was opened, <c>false</c> otherwise.</returns>
         private async Task<bool> OpenCurrentDevice()
         {
             _device = await HidDevice.FromIdAsync(_info.Id, Windows.Storage.FileAccessMode.ReadWrite);
-
-            Connected = _device != null;
-
             return Connected;
         }
 
@@ -163,11 +206,12 @@ namespace BlinkStickUniversal
         public void CloseDevice()
         {
             _device.Dispose();
-            Connected = false;
+            _device = null;
         }
         #endregion
 
         #region Helper functions for InfoBlocks
+
         /// <summary>
         /// Sets the info block.
         /// </summary>
@@ -178,7 +222,7 @@ namespace BlinkStickUniversal
             await SetInfoBlockAsync(id, Encoding.ASCII.GetBytes(data));
         }
 
-        private async Task<String> GetInfoBlockAsStringAsync(byte id)
+        private async Task<string> GetInfoBlockAsStringAsync(byte id)
         {
             var dataBytes = await GetInfoBlockAsync(id);
 
@@ -238,6 +282,7 @@ namespace BlinkStickUniversal
         /// <param name="id">Identifier.</param>
         public async Task<byte[]> GetInfoBlockAsync(byte id)
         {
+            if (!Connected) throw new Exception("Not connected");
             if (id == 2 || id == 3)
             {
                 return await GetFeatureAsync(id);
@@ -251,7 +296,7 @@ namespace BlinkStickUniversal
         /// Sets the color of the led.
         /// </summary>
         /// <param name="color">Must be in #rrggbb format</param>
-        public async Task SetColorAsync(String color)
+        public async Task SetColorAsync(string color)
         {
             await SetColorAsync(RgbColor.FromString(color));
         }
@@ -285,6 +330,7 @@ namespace BlinkStickUniversal
         /// <returns><c>true</c>, if led color was received, <c>false</c> otherwise.</returns>
         public async Task<Tuple<byte, byte, byte>> GetColorAsync()
         {
+            if (!Connected) throw new Exception("Not connected");
             var report = await GetFeatureAsync(0x01);
             return new Tuple<byte, byte, byte>(report[1], report[2], report[3]);
         }
@@ -514,11 +560,8 @@ namespace BlinkStickUniversal
             for (var i = 0; i < repeats; i++)
             {
                 await InternalSetColorAsync(channel, index, r, g, b);
-
                 await Task.Delay(delay);
-
                 await InternalSetColorAsync(channel, index, 0, 0, 0);
-
                 await Task.Delay(delay);
             }
         }
@@ -787,19 +830,9 @@ namespace BlinkStickUniversal
         /// <returns>An array of BlinkStick devices</returns>
         public static async Task<BlinkStick[]> FindAllAsync()
         {
-            var result = new List<BlinkStick>();
-
-            var selector = HidDevice.GetDeviceSelector(0xff00, 0x0001, VendorId, ProductId);
-
+            var selector = HidDevice.GetDeviceSelector(UsagePage, UsageId, VendorId, ProductId);
             var deviceInformationList = await DeviceInformation.FindAllAsync(selector);
-
-            foreach (var info in deviceInformationList)
-            {
-                var led = new BlinkStick {_info = info};
-                result.Add(led);
-            }
-
-            return result.ToArray();
+            return deviceInformationList.Select(info => new BlinkStick(info)).ToArray();
         }
 
         /// <summary>
@@ -809,8 +842,7 @@ namespace BlinkStickUniversal
         public static async Task<BlinkStick> FindFirstAsync()
         {
             var devices = await FindAllAsync();
-
-            return devices.Length > 0 ? devices[0] : null;
+            return devices.FirstOrDefault();
         }
         #endregion
 
@@ -875,13 +907,9 @@ namespace BlinkStickUniversal
         private async Task<byte[]> GetFeatureAsync(ushort reportId)
         {
             var featureReport = await _device.GetFeatureReportAsync(reportId);
-
             var dataReader = DataReader.FromBuffer(featureReport.Data);
-
             var result = new byte[featureReport.Data.Length];
-
             dataReader.ReadBytes(result);
-
             return result;
         }
 
