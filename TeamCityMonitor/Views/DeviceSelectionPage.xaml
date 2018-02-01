@@ -30,12 +30,7 @@
         <ListView Grid.Column="0" ItemsSource="{x:Bind Devices}" x:Name="DeviceList">
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel>
-                        <TextBlock>
-                            <Run Text="{Binding ManufacturerName}"/>
-                            <Run Text=" - "/>
-                            <Run Text="{Binding ProductName}"/>
-                        </TextBlock>
+                    <StackPanel MinHeight="10">
                         <TextBlock Text="{Binding InfoBlock1}" Visibility="{Binding InfoBlock1, Converter={StaticResource HideIfNull}}"/>
                         <TextBlock Text="{Binding InfoBlock2}" Visibility="{Binding InfoBlock2, Converter={StaticResource HideIfNull}}"/>
                     </StackPanel>
@@ -43,11 +38,6 @@
             </ListView.ItemTemplate>
         </ListView>
         <StackPanel Grid.Column="1" DataContext="{Binding ElementName=DeviceList, Path=SelectedValue}">
-            <TextBlock>
-                <Run Text="{Binding ManufacturerName}"/>
-                <Run Text=" - "/>
-                <Run Text="{Binding ProductName}"/>
-            </TextBlock>
             <TextBlock Text="{Binding InfoBlock1}" Visibility="{Binding InfoBlock1, Converter={StaticResource HideIfNull}}"/>
             <TextBlock Text="{Binding InfoBlock2}" Visibility="{Binding InfoBlock2, Converter={StaticResource HideIfNull}}"/>
         </StackPanel>

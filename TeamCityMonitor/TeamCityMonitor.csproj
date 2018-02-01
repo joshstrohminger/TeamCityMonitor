@@ -169,6 +169,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BlinkStickUniversal\BlinkStickUniversal.csproj">
+      <Project>{17becb9d-d8b1-4d67-86f5-34536a34d6bb}</Project>
+      <Name>BlinkStickUniversal</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Interfaces\Interfaces.csproj">
       <Project>{e4e78c23-9f24-44da-81f6-462425a68aaf}</Project>
       <Name>Interfaces</Name>
@@ -177,12 +181,6 @@
       <Project>{b41c688e-6dab-42e2-8be7-3f9e1c2faeac}</Project>
       <Name>MVVM</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="BlinkStickCore, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Dependencies\BlinkStickCore.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

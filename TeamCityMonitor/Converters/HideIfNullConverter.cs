@@ -8,6 +8,7 @@ namespace TeamCityMonitor.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
+            if (value is string s && string.IsNullOrWhiteSpace(s)) value = null;
             return value == null ? Visibility.Collapsed : Visibility.Visible;
         }
 
