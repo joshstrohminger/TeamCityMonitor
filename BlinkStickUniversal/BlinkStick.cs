@@ -5,10 +5,11 @@ using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
 using Windows.Devices.HumanInterfaceDevice;
 using Windows.Storage.Streams;
+using MVVM;
 
 namespace BlinkStickUniversal
 {
-    public class BlinkStick
+    public class BlinkStick : ObservableObject
     {
         #region Fields
 
@@ -34,12 +35,6 @@ namespace BlinkStickUniversal
 
         /// <value><c>true</c> if connected; otherwise, <c>false</c>.</value>
         public bool Connected => _device != null;
-
-        /// <summary>
-        /// Gets the device type
-        /// </summary>
-        /// <value>Returns the device type.</value>
-        public BlinkStickDeviceEnum BlinkStickDevice { get; private set; }
 
         private string _infoBlock1;
         /// <summary>
@@ -80,6 +75,7 @@ namespace BlinkStickUniversal
                         _infoBlock1 = previousValue;
                     }
                 });
+                OnPropertyChanged();
             }
         }
 
@@ -137,12 +133,17 @@ namespace BlinkStickUniversal
             get
             {
                 if (_mode != -1) return _mode;
-                var getModeTask = Task.Run(async () => {
-                    var result = await GetModeAsync();
-                    return result;
-                });
-
-                _mode = getModeTask.Result;
+                var getModeTask = Task.Run(async () => await GetModeAsync());
+                getModeTask.Wait();
+                if (getModeTask.IsFaulted)
+                {
+                    _mode = -1;
+                    OnError?.Invoke($"Failed to get {nameof(Mode)}", getModeTask.Exception);
+                }
+                else
+                {
+                    _mode = getModeTask.Result;
+                }
                 return _mode;
             }
             set
@@ -177,9 +178,8 @@ namespace BlinkStickUniversal
         /// After a successful connection, a DeviceAttached event will normally be sent.
         /// </summary>
         /// <returns>True if a Blinkstick device is connected, False otherwise.</returns>
-        public async Task<bool> OpenDeviceAsync(BlinkStickDeviceEnum blinkStickDevice)
+        public async Task<bool> OpenDeviceAsync()
         {
-            BlinkStickDevice = blinkStickDevice;
             var result = false;
 
             if (_info != null)
@@ -914,16 +914,5 @@ namespace BlinkStickUniversal
         }
 
         #endregion
-    }
-
-    public enum BlinkStickDeviceEnum
-    {
-        Unknown,
-        BlinkStick,
-        BlinkStickPro,
-        BlinkStickStrip,
-        BlinkStickSquare,
-        BlinkStickNano,
-        BlinkStickFlex
     }
 }
