@@ -20,6 +20,7 @@ namespace BlinkStickUniversal
 
         private readonly DeviceInformation _info;
         private HidDevice _device;
+        private bool _connected;
         private bool _stopped;
 
         #endregion
@@ -33,8 +34,26 @@ namespace BlinkStickUniversal
 
         #region Device Properties
 
+        private HidDevice Device
+        {
+            get => _device;
+            set
+            {
+                _device = value;
+                Connected = _device != null;
+            }
+        }
+
         /// <value><c>true</c> if connected; otherwise, <c>false</c>.</value>
-        public bool Connected => _device != null;
+        public bool Connected
+        {
+            get => _connected;
+            private set
+            {
+                _connected = value;
+                OnPropertyChanged();
+            }
+        }
 
         private string _infoBlock1;
         /// <summary>
@@ -196,7 +215,7 @@ namespace BlinkStickUniversal
         /// <returns><c>true</c>, if current device was opened, <c>false</c> otherwise.</returns>
         private async Task<bool> OpenCurrentDevice()
         {
-            _device = await HidDevice.FromIdAsync(_info.Id, Windows.Storage.FileAccessMode.ReadWrite);
+            Device = await HidDevice.FromIdAsync(_info.Id, Windows.Storage.FileAccessMode.ReadWrite);
             return Connected;
         }
 
@@ -205,8 +224,8 @@ namespace BlinkStickUniversal
         /// </summary>
         public void CloseDevice()
         {
-            _device.Dispose();
-            _device = null;
+            Device.Dispose();
+            Device = null;
         }
         #endregion
 
@@ -874,7 +893,7 @@ namespace BlinkStickUniversal
 
         private async Task SetFeatureAsync(byte[] buffer)
         {
-            var featureReport = _device.CreateFeatureReport(buffer[0]);
+            var featureReport = Device.CreateFeatureReport(buffer[0]);
 
             var dataWriter = new DataWriter();
 
@@ -893,7 +912,7 @@ namespace BlinkStickUniversal
                 attempt++;
                 try
                 {
-                    await _device.SendFeatureReportAsync(featureReport);
+                    await Device.SendFeatureReportAsync(featureReport);
                     break;
                 }
                 catch (Exception)
@@ -906,7 +925,7 @@ namespace BlinkStickUniversal
 
         private async Task<byte[]> GetFeatureAsync(ushort reportId)
         {
-            var featureReport = await _device.GetFeatureReportAsync(reportId);
+            var featureReport = await Device.GetFeatureReportAsync(reportId);
             var dataReader = DataReader.FromBuffer(featureReport.Data);
             var result = new byte[featureReport.Data.Length];
             dataReader.ReadBytes(result);

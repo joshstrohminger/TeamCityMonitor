@@ -59,7 +59,7 @@
         </ItemsControl>
         <StackPanel Orientation="Horizontal">
             <Slider VerticalAlignment="Center" TickPlacement="None" x:Name="BrightnessSlider" Value="50" Minimum="0" Maximum="100" StepFrequency="1" SnapsTo="StepValues" Width="200"/>
-            <TextBlock Text="{Binding Value, ElementName=BrightnessSlider}" VerticalAlignment="Center" Margin="5"/>
+            <TextBlock Text="{Binding Value, ElementName=BrightnessSlider, Mode=OneWay}" VerticalAlignment="Center" Margin="5"/>
         </StackPanel>
     </StackPanel>
 </Page>

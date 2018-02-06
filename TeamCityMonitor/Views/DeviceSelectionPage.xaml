@@ -14,7 +14,7 @@
     <Page.BottomAppBar>
         <CommandBar>
             <AppBarButton Label="Refresh" Icon="Refresh" Command="{x:Bind RefreshDevices}"/>
-            <AppBarButton Label="Connect" Icon="Forward" Command="{x:Bind OpenDevice}" CommandParameter="{x:Bind DeviceList.SelectedValue}"/>
+            <AppBarButton Label="Connect" Icon="Forward" Command="{x:Bind OpenDevice}"/>
         </CommandBar>
     </Page.BottomAppBar>
     
@@ -27,19 +27,19 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <ListView Grid.Column="0" ItemsSource="{x:Bind Devices}" x:Name="DeviceList">
+        <ListView Grid.Column="0" ItemsSource="{x:Bind Devices}" SelectedValue="{x:Bind SelectedDevice, Mode=TwoWay}">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <StackPanel MinHeight="10">
-                        <TextBlock Text="{Binding InfoBlock1}" Visibility="{Binding InfoBlock1, Converter={StaticResource HideIfNull}}"/>
-                        <TextBlock Text="{Binding InfoBlock2}" Visibility="{Binding InfoBlock2, Converter={StaticResource HideIfNull}}"/>
+                        <TextBlock Text="{Binding InfoBlock1, Mode=OneWay}" Visibility="{Binding InfoBlock1, Mode=OneWay, Converter={StaticResource HideIfNull}}"/>
+                        <TextBlock Text="{Binding InfoBlock2, Mode=OneWay}" Visibility="{Binding InfoBlock2, Mode=OneWay, Converter={StaticResource HideIfNull}}"/>
                     </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        <StackPanel Grid.Column="1" DataContext="{Binding ElementName=DeviceList, Path=SelectedValue}">
-            <TextBlock Text="{Binding InfoBlock1}" Visibility="{Binding InfoBlock1, Converter={StaticResource HideIfNull}}"/>
-            <TextBlock Text="{Binding InfoBlock2}" Visibility="{Binding InfoBlock2, Converter={StaticResource HideIfNull}}"/>
+        <StackPanel Grid.Column="1">
+            <TextBlock Text="{x:Bind SelectedDevice.InfoBlock1, Mode=OneWay}" Visibility="{x:Bind SelectedDevice.InfoBlock1, Mode=OneWay, Converter={StaticResource HideIfNull}}"/>
+            <TextBlock Text="{x:Bind SelectedDevice.InfoBlock2, Mode=OneWay}" Visibility="{x:Bind SelectedDevice.InfoBlock2, Mode=OneWay, Converter={StaticResource HideIfNull}}"/>
         </StackPanel>
     </Grid>
 </Page>

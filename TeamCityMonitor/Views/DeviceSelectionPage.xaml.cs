@@ -1,20 +1,36 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using Windows.UI.Core;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using BlinkStickUniversal;
 using MVVM;
+using MVVM.Annotations;
 
 namespace TeamCityMonitor.Views
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class DeviceSelectionPage : Page
+    public sealed partial class DeviceSelectionPage : INotifyPropertyChanged
     {
+        private BlinkStick _selectedDevice;
+
+        public BlinkStick SelectedDevice
+        {
+            get => _selectedDevice;
+            set
+            {
+                if (ReferenceEquals(_selectedDevice, value)) return;
+                _selectedDevice = value;
+                OnPropertyChanged();
+                OpenDevice.RaiseCanExecuteChanged();
+            }
+        }
+
         public DeviceSelectionPage()
         {
-            OpenDevice = new RelayCommand<BlinkStick>(ExecuteOpenDevice, CanExecuteOpenDevice);
+            OpenDevice = new RelayCommand(ExecuteOpenDevice, CanExecuteOpenDevice);
             RefreshDevices = new RelayCommand(ExecuteRefreshDevices);
             InitializeComponent();
         }
@@ -36,15 +52,15 @@ namespace TeamCityMonitor.Views
             }
         }
 
-        private bool CanExecuteOpenDevice(BlinkStick blinkStick)
+        private bool CanExecuteOpenDevice()
         {
-            return blinkStick?.Connected == true;
+            return SelectedDevice != null;
         }
 
-        private void ExecuteOpenDevice(BlinkStick blinkStick)
+        private void ExecuteOpenDevice()
         {
-            if (!CanExecuteOpenDevice(blinkStick)) return;
-            Frame.Navigate(typeof(SetupPage), blinkStick);
+            if (!CanExecuteOpenDevice()) return;
+            Frame.Navigate(typeof(SetupPage), SelectedDevice);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -57,5 +73,13 @@ namespace TeamCityMonitor.Views
         public IRelayCommand RefreshDevices { get; }
 
         public ObservableCollection<BlinkStick> Devices { get; } = new ObservableCollection<BlinkStick>();
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

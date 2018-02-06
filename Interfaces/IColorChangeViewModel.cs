@@ -8,6 +8,7 @@ namespace Interfaces
         byte OriginalBrightness { get; }
         Color WorkingColor { get; }
         Color NewColor { get; }
+        Color ResultingColor { get; }
         byte NewBrightness { get; }
         bool Accepted { get; }
         void ChangeColor(Color color);

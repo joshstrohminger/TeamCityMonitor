@@ -12,6 +12,7 @@ namespace TeamCityMonitor.ViewModels
         public Color OriginalColor { get; }
         public byte OriginalBrightness { get; }
         public Color WorkingColor { get; }
+        public Color ResultingColor { get; private set; }
         public Color NewColor { get; private set; }
         public byte NewBrightness { get; private set; }
         public bool Accepted { get; private set; }
@@ -23,10 +24,12 @@ namespace TeamCityMonitor.ViewModels
             OriginalBrightness = brightness;
             var hsv = color.ToHsv();
             WorkingColor = ColorHelper.FromHsv(hsv.H, hsv.S, brightness / 100d);
+            ResultingColor = WorkingColor;
         }
 
         public void ChangeColor(Color color)
         {
+            ResultingColor = color;
             var hsv = color.ToHsv();
             NewBrightness = (byte)Math.Round(hsv.V * 100, MidpointRounding.AwayFromZero);
             NewColor = ColorHelper.FromHsv(hsv.H, hsv.S, 1);
