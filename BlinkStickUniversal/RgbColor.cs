@@ -25,7 +25,7 @@ namespace BlinkStickUniversal
     public class RgbColor
     {
         #region Colors
-        static Dictionary<string, string> _NamesToHex = new Dictionary<string, string>
+        private static readonly Dictionary<string, string> NamesToHex = new Dictionary<string, string>
         {
             {"aliceblue", "#f0f8ff"},
             {"antiquewhite", "#faebd7"},
@@ -180,20 +180,23 @@ namespace BlinkStickUniversal
         /// <summary>
         /// The Red byte component.
         /// </summary>
-        public Byte R;
+        public byte R { get; }
 
         /// <summary>
         /// The Green byte component.
         /// </summary>
-        public Byte G;
+        public byte G { get; }
 
         /// <summary>
         /// The Blue byte component.
         /// </summary>
-        public Byte B;
+        public byte B { get; }
 
-        public RgbColor ()
+        public RgbColor (byte r, byte g, byte b)
         {
+            R = r;
+            G = g;
+            B = b;
         }
 
         /// <summary>
@@ -203,16 +206,8 @@ namespace BlinkStickUniversal
         /// <param name="r">The red component.</param>
         /// <param name="g">The green component.</param>
         /// <param name="b">The blue component.</param>
-        public static RgbColor FromRgb(int r, int g, int b)
-        {
-            RgbColor color = new RgbColor();
-            color.R = (byte)r;
-            color.G = (byte)g;
-            color.B = (byte)b;
+        public RgbColor(int r, int g, int b) : this((byte) r, (byte) g, (byte) b){}
 
-            return color;
-        }
-        
         /// <summary>
         /// Froms the color of the GDK color.
         /// </summary>
@@ -222,13 +217,11 @@ namespace BlinkStickUniversal
         /// <param name="b">The blue component.</param>
         public static RgbColor FromGdkColor(ushort r, ushort g, ushort b)
         {
-            RgbColor color = new RgbColor();
-            
-            color.R = (byte)(r / 0x100);
-            color.G = (byte)(g / 0x100);
-            color.B = (byte)(b / 0x100);
-            
-            return color;
+            return new RgbColor(
+                (byte) (r / 0x100),
+                (byte) (g / 0x100),
+                (byte) (b / 0x100)
+            );
         }
 
         /// <summary>
@@ -236,13 +229,11 @@ namespace BlinkStickUniversal
         /// </summary>
         /// <returns>The string.</returns>
         /// <param name="color">Color string.</param>
-        public static RgbColor FromString (String color)
+        public static RgbColor FromString (string color)
         {
-            RgbColor result = new RgbColor();
-
-            if (_NamesToHex.ContainsKey(color.ToLower()))
+            if (NamesToHex.ContainsKey(color.ToLower()))
             {
-                color = _NamesToHex[color.ToLower()];
+                color = NamesToHex[color.ToLower()];
             }
             else
             {
@@ -250,11 +241,11 @@ namespace BlinkStickUniversal
                     throw new Exception("Color value is invalid");
             }
 
-            result.R = Convert.ToByte(color.Substring(1, 2), 16);
-            result.G = Convert.ToByte(color.Substring(3, 2), 16);
-            result.B = Convert.ToByte(color.Substring(5, 2), 16);
-
-            return result;
+            return new RgbColor(
+                Convert.ToByte(color.Substring(1, 2), 16),
+                Convert.ToByte(color.Substring(3, 2), 16),
+                Convert.ToByte(color.Substring(5, 2), 16)
+            );
         }
 
         /// <summary>
@@ -262,7 +253,7 @@ namespace BlinkStickUniversal
         /// </summary>
         public static RgbColor Black ()
         {
-            return RgbColor.FromRgb(0, 0, 0);
+            return new RgbColor(0, 0, 0);
         }
 
         /// <summary>
@@ -270,7 +261,7 @@ namespace BlinkStickUniversal
         /// </summary>
         /// <returns><c>true</c> if is valid color the specified color; otherwise, <c>false</c>.</returns>
         /// <param name="color">Color.</param>
-        public static Boolean IsValidColor (String color)
+        public static bool IsValidColor (string color)
         {
             return Regex.IsMatch(color, "^#[A-Fa-f0-9]{6}$");
         }
@@ -280,10 +271,7 @@ namespace BlinkStickUniversal
         /// </summary>
         /// <returns>A string that represents the current object.</returns>
         /// <filterpriority>2</filterpriority>
-        public override string ToString()
-        {
-            return string.Format("{0:x2}{1:x2}{2:x2}", this.R, this.G, this.B);
-        }
+        public override string ToString() => $"{R:x2}{G:x2}{B:x2}";
     }
 }
 

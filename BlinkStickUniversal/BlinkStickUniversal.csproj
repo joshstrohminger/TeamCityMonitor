@@ -107,7 +107,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="BlinkStick.cs" />
-    <Compile Include="HSLColor.cs" />
+    <Compile Include="HslColor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RgbColor.cs" />
     <EmbeddedResource Include="Properties\BlinkStickUniversal.rd.xml" />

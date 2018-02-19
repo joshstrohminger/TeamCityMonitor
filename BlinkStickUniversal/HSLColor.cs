@@ -17,126 +17,113 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BlinkStickUniversal
 {
-	public struct HSLColor 
+	public struct HslColor 
 	{
-		double m_hue;
-		double m_saturation;
-		double m_lightness;
+	    public override int GetHashCode()
+	    {
+	        unchecked
+	        {
+	            var hashCode = Lightness.GetHashCode();
+	            hashCode = (hashCode * 397) ^ Hue.GetHashCode();
+	            hashCode = (hashCode * 397) ^ Saturation.GetHashCode();
+	            return hashCode;
+	        }
+	    }
+        
 		// http://en.wikipedia.org/wiki/HSL_color_space
+        public double Lightness { get; }
 
-		public double Hue
+		public double Hue { get; }
+
+	    public double Saturation { get; }
+
+		public HslColor(double hue, double saturation, double lightness)
 		{
-			get { return m_hue; }
-			set { m_hue = value; }
+			Hue = hue % 360;
+		    if (Hue < 0)
+		    {
+		        Hue += 360;
+		    }
+			Saturation = Math.Max(0, Math.Min(1, saturation));
+			Lightness = Math.Max(0, Math.Min(1, lightness));
 		}
-		public double Saturation
+
+		public static HslColor FromRgbColor(RgbColor cc)
 		{
-			get { return m_saturation; }
-			set { m_saturation = value; }
-		}
-		public double Lightness
-		{
-			get { return m_lightness; }
-			set
-			{ 
-				m_lightness = value;
-				if (m_lightness < 0)
-					m_lightness = 0;
-				if (m_lightness > 1)
-					m_lightness = 1;
-			}
-		}
-		public HSLColor(double hue, double saturation, double lightness)
-		{
-			m_hue = Math.Min(360, hue);
-			m_saturation = Math.Min(1, saturation);
-			m_lightness = Math.Min(1, lightness);
-		}
-		public HSLColor(RgbColor color)
-		{
-			m_hue = 0;
-			m_saturation = 1;
-			m_lightness = 1;
-			FromRGB(color);
-		}
-		public RgbColor Color
-		{
-			get { return ToRGB(); }
-			set { FromRGB(value); }
-		}
-		void FromRGB(RgbColor cc)
-		{
-			double r = (double)cc.R / 255d;
-			double g = (double)cc.G / 255d;
-			double b = (double)cc.B / 255d;
+			var r = cc.R / 255d;
+			var g = cc.G / 255d;
+			var b = cc.B / 255d;
 			
-			double min = Math.Min(Math.Min(r, g), b);
-			double max = Math.Max(Math.Max(r, g), b);
+			var min = Math.Min(Math.Min(r, g), b);
+			var max = Math.Max(Math.Max(r, g), b);
 			// calulate hue according formula given in
 			// "Conversion from RGB to HSL or HSV"
-			m_hue = 0;
+			double hue = 0;
+		    double saturation = 1;
+
 			if (min != max)
 			{
 				if (r == max && g >= b)
 				{
-					m_hue = 60 * ((g - b) / (max - min)) + 0;
+					hue = 60 * ((g - b) / (max - min)) + 0;
 				}
 				else
 				if (r == max && g < b)
 				{
-					m_hue = 60 * ((g - b) / (max - min)) + 360;
+					hue = 60 * ((g - b) / (max - min)) + 360;
 				}
 				else
 				if (g == max)
 				{
-					m_hue = 60 * ((b - r) / (max - min)) + 120;
+					hue = 60 * ((b - r) / (max - min)) + 120;
 				}
 				else
 				if (b == max)
 				{
-					m_hue = 60 * ((r - g) / (max - min)) + 240;
+					hue = 60 * ((r - g) / (max - min)) + 240;
 				}
 			}
 			// find lightness
-			m_lightness = (min+max)/2;
+			var lightness = (min+max)/2;
 
 			// find saturation
-			if (m_lightness == 0 ||min == max)
-				m_saturation = 0;
+			if (lightness == 0 || min == max)
+				saturation = 0;
 			else
-			if (m_lightness > 0 && m_lightness <= 0.5)
-				m_saturation = (max-min)/(2*m_lightness);
+			if (lightness > 0 && lightness <= 0.5)
+				saturation = (max-min)/(2*lightness);
 			else
-			if (m_lightness > 0.5)
-				m_saturation = (max-min)/(2-2*m_lightness);
+			if (lightness > 0.5)
+				saturation = (max-min)/(2-2*lightness);
+
+            return new HslColor(hue, saturation, lightness);
 		}
-		RgbColor ToRGB()
+
+	    public RgbColor ToRgbColor()
 		{
 			// convert to RGB according to
 			// "Conversion from HSL to RGB"
 
-			double r = m_lightness;
-			double g = m_lightness;
-			double b = m_lightness;
-			if (m_saturation == 0)
-				return RgbColor.FromRgb((int)(r*255), (int)(g*255), (int)(b*255));
+			var r = Lightness;
+			var g = Lightness;
+			var b = Lightness;
+			if (Saturation == 0)
+				return new RgbColor((int)(r*255), (int)(g*255), (int)(b*255));
 
-			double q = 0;
-			if (m_lightness < 0.5)
-				q = m_lightness * (1 + m_saturation);
+			double q;
+			if (Lightness < 0.5)
+				q = Lightness * (1 + Saturation);
 			else
-				q = m_lightness + m_saturation - (m_lightness * m_saturation);
-			double p = 2 * m_lightness - q;
-			double hk = m_hue / 360;
+				q = Lightness + Saturation - (Lightness * Saturation);
+			var p = 2 * Lightness - q;
+			var hk = Hue / 360;
 
 			// r,g,b colors
-			double[] tc = new double[3] { hk + (1d/3d), hk, hk-(1d/3d)};
-			double[] colors = new double[3] {0, 0, 0};
+			double[] tc = { hk + (1d/3d), hk, hk-(1d/3d)};
+			double[] colors = {0, 0, 0};
 
 			for (int color = 0; color < colors.Length; color++)
 			{
@@ -158,34 +145,28 @@ namespace BlinkStickUniversal
 
 				colors[color] *= 255; // convert to value expected by Color
 			}
-			return RgbColor.FromRgb((int)colors[0], (int)colors[1], (int)colors[2]);
+			return new RgbColor((int)colors[0], (int)colors[1], (int)colors[2]);
 		}
 
-		public static bool operator != (HSLColor left, HSLColor right)
+		public static bool operator != (HslColor left, HslColor right)
 		{
-			return !(left == right);
-		}
-		public static bool operator == (HSLColor left, HSLColor right)
-		{
-			return (left.Hue == right.Hue && 
-					left.Lightness == right.Lightness && 
-					left.Saturation == right.Saturation);
-		}
-		public override string ToString()
-		{
-			string s = string.Format("HSL({0:f2}, {1:f2}, {2:f2})", Hue, Saturation, Lightness);
-			s += string.Format ("RGB({0:x2}{1:x2}{2:x2})", Color.R, Color.G, Color.B); 
-			return s;
+			return !left.Equals(right);
 		}
 
-        public override bool Equals(object obj)
-        {
-            return base.Equals(obj);
-        }
+		public static bool operator == (HslColor left, HslColor right)
+		{
+		    return left.Equals(right);
+		}
+	    public bool Equals(HslColor other)
+	    {
+	        return Lightness.Equals(other.Lightness) && Hue.Equals(other.Hue) && Saturation.Equals(other.Saturation);
+	    }
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+	    public override bool Equals(object obj)
+	    {
+	        if (ReferenceEquals(null, obj)) return false;
+	        return obj is HslColor color && Equals(color);
+	    }
+        public override string ToString() => $"HSL({Hue:f2}, {Saturation:f2}, {Lightness:f2}) RGB({ToRgbColor()})"; 
 	}
 }

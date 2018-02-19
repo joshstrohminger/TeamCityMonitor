@@ -1,4 +1,5 @@
 ﻿using System;
+using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -15,96 +16,90 @@ namespace TeamCityMonitor.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class SetupPage : Page
+    public sealed partial class SetupPage
     {
-        private byte _brightness = 100;
-        private IColorChangeViewModel _colorChange;
-
         public BlinkStick Device { get; private set; }
+
+        private ISetupViewModel _viewModel;
+        private Rectangle _colorTarget;
 
         public SetupPage()
         {
             InitializeComponent();
             SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
-            MyBrightness.Text = _brightness.ToString();
         }
 
         private void OnBackRequested(object sender, BackRequestedEventArgs backRequestedEventArgs)
         {
             if (!backRequestedEventArgs.Handled && Frame.CanGoBack)
             {
-                _colorChange = null;
                 backRequestedEventArgs.Handled = true;
+                _viewModel = null;
+                DataContext = null;
                 Frame.GoBack();
             }
         }
 
-        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             base.OnNavigatedTo(e);
             
-            if (e.NavigationMode == NavigationMode.Back && _colorChange?.Accepted == true)
+            if (e.NavigationMode == NavigationMode.Back)
             {
-                _brightness = _colorChange.NewBrightness;
-                MyBrightness.Text = _brightness.ToString();
-                MyRectangle.Fill = new SolidColorBrush(_colorChange.NewColor);
-                await Device.SetColorAsync(_colorChange.ResultingColor.R, _colorChange.ResultingColor.G, _colorChange.ResultingColor.B);
+                //todo handle navigating back from the monitor page
             }
             else if (e.NavigationMode == NavigationMode.New)
             {
                 Device = (BlinkStick) e.Parameter ?? throw new ArgumentNullException(nameof(e.Parameter));
+                _viewModel = new SetupViewModel();
+                DataContext = _viewModel;
             }
-            _colorChange = null;
         }
 
         private void Monitor_OnClick(object sender, RoutedEventArgs e)
         {
-            _colorChange = null;
             Frame.Navigate(typeof(MonitorPage));
-        }
-
-        private void Color_OnClick(object sender, RoutedEventArgs e)
-        {
-            if (MyRectangle.Fill is SolidColorBrush brush)
-            {
-                _colorChange = new ColorChangeViewModel(brush.Color, _brightness);
-                Frame.Navigate(typeof(ColorSelectionPage), _colorChange);
-            }
         }
 
         private void ColorFlyout_OnOpening(object sender, object e)
         {
-            MyColorPicker.Color = _change.WorkingColor;
+            //nothing to do here anymore?
         }
 
         private void ColorButton_OnClick(object sender, RoutedEventArgs e)
         {
             var button = (Button) sender;
-            var rectangle = (Rectangle) button.Content;
-            var brush = (SolidColorBrush) rectangle.Fill;
-            _change = new ColorChangeViewModel(brush.Color, (byte) BrightnessSlider.Value)
+            if (button.Content is Rectangle rectangle && rectangle.Fill is SolidColorBrush brush)
             {
-                Source = rectangle
-            };
+                _colorTarget = rectangle;
+                var brightened = HslColor.FromRgbColor(new RgbColor(brush.Color.R, brush.Color.G, brush.Color.B));
+                var hsl = new HslColor(brightened.Hue, brightened.Saturation, _viewModel.Brightness / 100d);
+                var rgb = hsl.ToRgbColor();
+                var color = new Color
+                {
+                    R = rgb.R,
+                    G = rgb.G,
+                    B = rgb.B
+                };
+                MyColorPicker.Color = color;
+            }
         }
 
-        private ColorChangeViewModel _change;
-
-        private void ColorAccepted_OnClick(object sender, RoutedEventArgs e)
+        private async void ColorAccepted_OnClick(object sender, RoutedEventArgs e)
         {
-            _change.ChangeColor(MyColorPicker.Color);
+            var color = new RgbColor(MyColorPicker.Color.R, MyColorPicker.Color.G, MyColorPicker.Color.B);
+            var hsl = HslColor.FromRgbColor(color);
+            var brightened = new HslColor(hsl.Hue, hsl.Saturation, 1).ToRgbColor();
+            _colorTarget.Fill = new SolidColorBrush(new Color{R = brightened.R, G = brightened.G, B = brightened.B});
+            _viewModel.Brightness = hsl.Lightness * 100;
             ColorFlyout.Hide();
+            await Device.SetColorAsync(color);
         }
 
         private void ColorFlyout_OnClosing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
         {
-            if (_change?.Accepted == true)
-            {
-                _change.Source.Fill = new SolidColorBrush(_change.NewColor);
-                BrightnessSlider.Value = _change.NewBrightness;
-            }
-            _change = null;
+            _colorTarget = null;
         }
     }
 }

@@ -67,6 +67,7 @@ namespace TeamCityMonitor.Views
         {
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
             base.OnNavigatedTo(e);
+            ExecuteRefreshDevices();
         }
 
         public IRelayCommand OpenDevice { get; }

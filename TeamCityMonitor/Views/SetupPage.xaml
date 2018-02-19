@@ -7,7 +7,11 @@
     extensions:ApplicationView.Title="Setup"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:designData="using:DesignData"
+    xmlns:converters="using:Microsoft.Toolkit.Uwp.UI.Converters"
+    xmlns:converters1="using:TeamCityMonitor.Converters"
     mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance designData:SetupViewModelDesignData, IsDesignTimeCreatable=True}"
     NavigationCacheMode="Required">
 
     <Page.BottomAppBar>
@@ -17,8 +21,10 @@
             <AppBarButton Label="Monitor" Icon="Play" Click="Monitor_OnClick"/>
         </CommandBar>
     </Page.BottomAppBar>
-    
+
     <Page.Resources>
+        <converters:StringFormatConverter x:Key="StringFormat"/>
+        <converters1:RgbColorConverter x:Key="RgbColorConverter"/>
         <Flyout x:Name="ColorFlyout" Opening="ColorFlyout_OnOpening" Closing="ColorFlyout_OnClosing">
             <Grid>
                 <ColorPicker x:Name="MyColorPicker"
@@ -35,31 +41,67 @@
     </Page.Resources>
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Button Click="Color_OnClick">
-            <Rectangle x:Name="MyRectangle" Width="50" Height="50" Fill="Green"/>
-        </Button>
-        <TextBlock x:Name="MyBrightness"/>
-        <ItemsControl Margin="0,20,0,0">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Button Flyout="{StaticResource ColorFlyout}" Click="ColorButton_OnClick">
-                        <Rectangle Margin="10" Width="50" Height="50" Fill="{Binding}"/>
-                    </Button>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-            <SolidColorBrush>Green</SolidColorBrush>
-            <SolidColorBrush>Red</SolidColorBrush>
-            <SolidColorBrush>Yellow</SolidColorBrush>
-            <SolidColorBrush>Blue</SolidColorBrush>
-        </ItemsControl>
+        <TextBox Text="{Binding Host}" PlaceholderText="Host... 1.2.3.4"/>
         <StackPanel Orientation="Horizontal">
-            <Slider VerticalAlignment="Center" TickPlacement="None" x:Name="BrightnessSlider" Value="50" Minimum="0" Maximum="100" StepFrequency="1" SnapsTo="StepValues" Width="200"/>
-            <TextBlock Text="{Binding Value, ElementName=BrightnessSlider, Mode=OneWay}" VerticalAlignment="Center" Margin="5"/>
+            <Slider VerticalAlignment="Center" TickPlacement="None"  Value="{Binding Brightness}" Minimum="0" Maximum="100" Width="300"/>
+            <TextBlock Text="{Binding Brightness, Mode=OneWay, Converter={StaticResource StringFormat}, ConverterParameter='N0'}" VerticalAlignment="Center" Margin="5"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <Button Content="Add" Command="{Binding AddBuild}"/>
+            <Button Content="Remove" Command="{Binding RemoveBuild}"/>
+            <Button Content="Apply to All" Command="{Binding ApplyToAllBuilds}"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <ListView ItemsSource="{Binding Builds}" SelectedValue="{Binding ActiveBuild}" CanReorderItems="True" MinWidth="100" MinHeight="100">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Name}"/>
+                            <ItemsControl ItemsSource="{Binding Colors}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Rectangle Width="10" VerticalAlignment="Stretch">
+                                            <Rectangle.Fill>
+                                                <SolidColorBrush Color="{Binding Color, Converter={StaticResource RgbColorConverter}}"/>
+                                            </Rectangle.Fill>
+                                        </Rectangle>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <StackPanel DataContext="{Binding ActiveBuild}">
+                <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="Name..."/>
+                <TextBox Text="{Binding Id, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="ID..."/>
+                <ItemsControl ItemsSource="{Binding Colors}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <TextBlock HorizontalAlignment="Center" Text="{Binding Name}"/>
+                                <Button Click="ColorButton_OnClick" Flyout="{StaticResource ColorFlyout}">
+                                    <Rectangle Width="55" Height="50">
+                                        <Rectangle.Fill>
+                                            <SolidColorBrush Color="{Binding Color, Converter={StaticResource RgbColorConverter}}"/>
+                                        </Rectangle.Fill>
+                                    </Rectangle>
+                                </Button>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
         </StackPanel>
     </StackPanel>
 </Page>

@@ -106,7 +106,9 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="IColorChangeViewModel.cs" />
+    <Compile Include="IBuildViewModel.cs" />
+    <Compile Include="ILabeledColor.cs" />
+    <Compile Include="ISetupViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Interfaces.rd.xml" />
   </ItemGroup>
@@ -114,6 +116,16 @@
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.0.6</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BlinkStickUniversal\BlinkStickUniversal.csproj">
+      <Project>{17BECB9D-D8B1-4D67-86F5-34536A34D6BB}</Project>
+      <Name>BlinkStickUniversal</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\MVVM\MVVM.csproj">
+      <Project>{B41C688E-6DAB-42E2-8BE7-3F9E1C2FAEAC}</Project>
+      <Name>MVVM</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
