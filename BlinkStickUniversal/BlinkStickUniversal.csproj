@@ -107,6 +107,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="BlinkStick.cs" />
+    <Compile Include="ColorExtensions.cs" />
     <Compile Include="HslColor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RgbColor.cs" />
@@ -122,6 +123,11 @@
       <Project>{B41C688E-6DAB-42E2-8BE7-3F9E1C2FAEAC}</Project>
       <Name>MVVM</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Toolkit.Uwp">
+      <HintPath>..\..\..\..\.nuget\packages\microsoft.toolkit.uwp\2.1.1\lib\uap10.0\Microsoft.Toolkit.Uwp.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

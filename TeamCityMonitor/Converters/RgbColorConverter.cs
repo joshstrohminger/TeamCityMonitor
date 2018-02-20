@@ -12,7 +12,7 @@ namespace TeamCityMonitor.Converters
         {
             if (value is RgbColor c)
             {
-                return new Color {R = c.R, G = c.G, B = c.B};
+                return new Color {A = 255, R = c.R, G = c.G, B = c.B};
             }
             return DependencyProperty.UnsetValue;
         }

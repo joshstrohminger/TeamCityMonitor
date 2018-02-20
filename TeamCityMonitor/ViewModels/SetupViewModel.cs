@@ -8,7 +8,7 @@ namespace TeamCityMonitor.ViewModels
     public class SetupViewModel : ObservableObject, ISetupViewModel
     {
         private string _host;
-        private double _brightness;
+        private double _brightness = 100;
         private IBuildViewModel _activeBuild;
 
         public IRelayCommand AddBuild { get; }

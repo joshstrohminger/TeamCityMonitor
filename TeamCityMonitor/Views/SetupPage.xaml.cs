@@ -9,6 +9,8 @@ using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
 using BlinkStickUniversal;
 using Interfaces;
+using Microsoft.Toolkit.Uwp;
+using Microsoft.Toolkit.Uwp.Helpers;
 using TeamCityMonitor.ViewModels;
 
 namespace TeamCityMonitor.Views
@@ -21,7 +23,7 @@ namespace TeamCityMonitor.Views
         public BlinkStick Device { get; private set; }
 
         private ISetupViewModel _viewModel;
-        private Rectangle _colorTarget;
+        private ILabeledColor _colorTarget;
 
         public SetupPage()
         {
@@ -70,31 +72,25 @@ namespace TeamCityMonitor.Views
         private void ColorButton_OnClick(object sender, RoutedEventArgs e)
         {
             var button = (Button) sender;
-            if (button.Content is Rectangle rectangle && rectangle.Fill is SolidColorBrush brush)
+            if (button.DataContext is ILabeledColor labeledColor)
             {
-                _colorTarget = rectangle;
-                var brightened = HslColor.FromRgbColor(new RgbColor(brush.Color.R, brush.Color.G, brush.Color.B));
-                var hsl = new HslColor(brightened.Hue, brightened.Saturation, _viewModel.Brightness / 100d);
-                var rgb = hsl.ToRgbColor();
-                var color = new Color
-                {
-                    R = rgb.R,
-                    G = rgb.G,
-                    B = rgb.B
-                };
-                MyColorPicker.Color = color;
+                _colorTarget = labeledColor;
+                var hsv = Color.FromArgb(255, labeledColor.Color.R, labeledColor.Color.G, labeledColor.Color.B).ToHsv();
+                hsv.V = _viewModel.Brightness / 100; // apply the brightness
+                MyColorPicker.Color = hsv.ToArgb();
             }
         }
 
         private async void ColorAccepted_OnClick(object sender, RoutedEventArgs e)
         {
-            var color = new RgbColor(MyColorPicker.Color.R, MyColorPicker.Color.G, MyColorPicker.Color.B);
-            var hsl = HslColor.FromRgbColor(color);
-            var brightened = new HslColor(hsl.Hue, hsl.Saturation, 1).ToRgbColor();
-            _colorTarget.Fill = new SolidColorBrush(new Color{R = brightened.R, G = brightened.G, B = brightened.B});
-            _viewModel.Brightness = hsl.Lightness * 100;
+            var dimmedColor = MyColorPicker.Color;
+            var hsv = MyColorPicker.Color.ToHsv();
+            _viewModel.Brightness = hsv.V * 100;
+            hsv.V = 1;
+            var brightenedColor = hsv.ToArgb();
+            _colorTarget.Color = new RgbColor(brightenedColor.R, brightenedColor.G, brightenedColor.B);
             ColorFlyout.Hide();
-            await Device.SetColorAsync(color);
+            await Device.SetColorAsync(new RgbColor(dimmedColor.R, dimmedColor.G, dimmedColor.B));
         }
 
         private void ColorFlyout_OnClosing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)

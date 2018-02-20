@@ -25,6 +25,7 @@
     <Page.Resources>
         <converters:StringFormatConverter x:Key="StringFormat"/>
         <converters1:RgbColorConverter x:Key="RgbColorConverter"/>
+        <converters1:HideIfNullConverter x:Key="HideIfNull"/>
         <Flyout x:Name="ColorFlyout" Opening="ColorFlyout_OnOpening" Closing="ColorFlyout_OnClosing">
             <Grid>
                 <ColorPicker x:Name="MyColorPicker"
@@ -41,23 +42,23 @@
     </Page.Resources>
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <TextBox Text="{Binding Host}" PlaceholderText="Host... 1.2.3.4"/>
+        <TextBox Text="{Binding Host, Mode=TwoWay}" PlaceholderText="Host... 1.2.3.4"/>
         <StackPanel Orientation="Horizontal">
-            <Slider VerticalAlignment="Center" TickPlacement="None"  Value="{Binding Brightness}" Minimum="0" Maximum="100" Width="300"/>
-            <TextBlock Text="{Binding Brightness, Mode=OneWay, Converter={StaticResource StringFormat}, ConverterParameter='N0'}" VerticalAlignment="Center" Margin="5"/>
+            <Slider VerticalAlignment="Center" TickPlacement="None" Value="{Binding Brightness, Mode=TwoWay}" Minimum="0" Maximum="100" Width="300"/>
+            <TextBlock Text="{Binding Brightness, Mode=OneWay, Converter={StaticResource StringFormat}, ConverterParameter='{}{0:N0}'}" VerticalAlignment="Center" Margin="5"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal">
-            <Button Content="Add" Command="{Binding AddBuild}"/>
-            <Button Content="Remove" Command="{Binding RemoveBuild}"/>
-            <Button Content="Apply to All" Command="{Binding ApplyToAllBuilds}"/>
+            <Button Content="Add" Command="{Binding AddBuild, Mode=OneTime}"/>
+            <Button Content="Remove" Command="{Binding RemoveBuild, Mode=OneTime}"/>
+            <Button Content="Apply to All" Command="{Binding ApplyToAllBuilds, Mode=OneTime}"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal">
-            <ListView ItemsSource="{Binding Builds}" SelectedValue="{Binding ActiveBuild}" CanReorderItems="True" MinWidth="100" MinHeight="100">
+            <ListView ItemsSource="{Binding Builds, Mode=OneTime}" SelectedValue="{Binding ActiveBuild, Mode=TwoWay}" CanReorderItems="True" MinWidth="100" MinHeight="100">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Name}"/>
-                            <ItemsControl ItemsSource="{Binding Colors}">
+                            <TextBlock Text="{Binding Name, Mode=OneWay}"/>
+                            <ItemsControl ItemsSource="{Binding Colors, Mode=OneTime}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <StackPanel Orientation="Horizontal"/>
@@ -65,9 +66,9 @@
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Rectangle Width="10" VerticalAlignment="Stretch">
+                                        <Rectangle Width="15" VerticalAlignment="Stretch">
                                             <Rectangle.Fill>
-                                                <SolidColorBrush Color="{Binding Color, Converter={StaticResource RgbColorConverter}}"/>
+                                                <SolidColorBrush Color="{Binding Color, Mode=OneWay, Converter={StaticResource RgbColorConverter}}"/>
                                             </Rectangle.Fill>
                                         </Rectangle>
                                     </DataTemplate>
@@ -77,10 +78,10 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            <StackPanel DataContext="{Binding ActiveBuild}">
-                <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="Name..."/>
-                <TextBox Text="{Binding Id, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="ID..."/>
-                <ItemsControl ItemsSource="{Binding Colors}">
+            <StackPanel Visibility="{Binding ActiveBuild, Mode=OneWay, Converter={StaticResource HideIfNull}}">
+                <TextBox Text="{Binding ActiveBuild.Name, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" PlaceholderText="Name..."/>
+                <TextBox Text="{Binding ActiveBuild.Id, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" PlaceholderText="ID..."/>
+                <ItemsControl ItemsSource="{Binding ActiveBuild.Colors, Mode=OneWay}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <StackPanel Orientation="Horizontal"/>
@@ -89,11 +90,11 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <StackPanel>
-                                <TextBlock HorizontalAlignment="Center" Text="{Binding Name}"/>
+                                <TextBlock HorizontalAlignment="Center" Text="{Binding Name, Mode=OneTime}"/>
                                 <Button Click="ColorButton_OnClick" Flyout="{StaticResource ColorFlyout}">
                                     <Rectangle Width="55" Height="50">
                                         <Rectangle.Fill>
-                                            <SolidColorBrush Color="{Binding Color, Converter={StaticResource RgbColorConverter}}"/>
+                                            <SolidColorBrush Color="{Binding Color, Mode=TwoWay, Converter={StaticResource RgbColorConverter}}"/>
                                         </Rectangle.Fill>
                                     </Rectangle>
                                 </Button>
