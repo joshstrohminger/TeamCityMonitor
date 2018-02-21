@@ -24,7 +24,6 @@
 
     <Page.Resources>
         <converters:StringFormatConverter x:Key="StringFormat"/>
-        <converters1:RgbColorConverter x:Key="RgbColorConverter"/>
         <converters1:HideIfNullConverter x:Key="HideIfNull"/>
         <Flyout x:Name="ColorFlyout" Opening="ColorFlyout_OnOpening" Closing="ColorFlyout_OnClosing">
             <Grid>
@@ -68,7 +67,7 @@
                                     <DataTemplate>
                                         <Rectangle Width="15" VerticalAlignment="Stretch">
                                             <Rectangle.Fill>
-                                                <SolidColorBrush Color="{Binding Color, Mode=OneWay, Converter={StaticResource RgbColorConverter}}"/>
+                                                <SolidColorBrush Color="{Binding Color, Mode=OneWay}"/>
                                             </Rectangle.Fill>
                                         </Rectangle>
                                     </DataTemplate>
@@ -94,7 +93,7 @@
                                 <Button Click="ColorButton_OnClick" Flyout="{StaticResource ColorFlyout}">
                                     <Rectangle Width="55" Height="50">
                                         <Rectangle.Fill>
-                                            <SolidColorBrush Color="{Binding Color, Mode=TwoWay, Converter={StaticResource RgbColorConverter}}"/>
+                                            <SolidColorBrush Color="{Binding Color, Mode=TwoWay}"/>
                                         </Rectangle.Fill>
                                     </Rectangle>
                                 </Button>

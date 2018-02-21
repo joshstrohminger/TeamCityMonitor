@@ -4,12 +4,9 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using Windows.UI.Xaml.Shapes;
 using BlinkStickUniversal;
 using Interfaces;
-using Microsoft.Toolkit.Uwp;
 using Microsoft.Toolkit.Uwp.Helpers;
 using TeamCityMonitor.ViewModels;
 
@@ -75,7 +72,7 @@ namespace TeamCityMonitor.Views
             if (button.DataContext is ILabeledColor labeledColor)
             {
                 _colorTarget = labeledColor;
-                var hsv = Color.FromArgb(255, labeledColor.Color.R, labeledColor.Color.G, labeledColor.Color.B).ToHsv();
+                var hsv = labeledColor.Color.ToHsv();
                 hsv.V = _viewModel.Brightness / 100; // apply the brightness
                 MyColorPicker.Color = hsv.ToArgb();
             }
@@ -84,13 +81,12 @@ namespace TeamCityMonitor.Views
         private async void ColorAccepted_OnClick(object sender, RoutedEventArgs e)
         {
             var dimmedColor = MyColorPicker.Color;
-            var hsv = MyColorPicker.Color.ToHsv();
+            var hsv = dimmedColor.ToHsv();
             _viewModel.Brightness = hsv.V * 100;
             hsv.V = 1;
-            var brightenedColor = hsv.ToArgb();
-            _colorTarget.Color = new RgbColor(brightenedColor.R, brightenedColor.G, brightenedColor.B);
+            _colorTarget.Color = hsv.ToArgb();
             ColorFlyout.Hide();
-            await Device.SetColorAsync(new RgbColor(dimmedColor.R, dimmedColor.G, dimmedColor.B));
+            await Device.SetColorAsync(dimmedColor);
         }
 
         private void ColorFlyout_OnClosing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)

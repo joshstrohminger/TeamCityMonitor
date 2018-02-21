@@ -1,4 +1,5 @@
-﻿using BlinkStickUniversal;
+﻿using Windows.UI;
+using BlinkStickUniversal;
 using Interfaces;
 
 namespace DesignData
@@ -6,7 +7,7 @@ namespace DesignData
     public class LabeledColorDesignData : ILabeledColor
     {
         public string Name { get; }
-        public RgbColor Color { get; set; }
+        public Color Color { get; set; }
 
         public LabeledColorDesignData()
         {
@@ -15,7 +16,7 @@ namespace DesignData
         public LabeledColorDesignData(string name, string color)
         {
             Name = name;
-            Color = RgbColor.FromString(color);
+            Color = ColorExtensions.FromString(color);
         }
     }
 }

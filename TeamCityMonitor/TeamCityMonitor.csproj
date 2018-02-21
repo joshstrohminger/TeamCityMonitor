@@ -98,7 +98,6 @@
     </Compile>
     <Compile Include="Converters\HideIfNullConverter.cs" />
     <Compile Include="Converters\IsNullConverter.cs" />
-    <Compile Include="Converters\RgbColorConverter.cs" />
     <Compile Include="ViewModels\BuildViewModel.cs" />
     <Compile Include="ViewModels\LabeledColor.cs" />
     <Compile Include="ViewModels\SetupViewModel.cs" />

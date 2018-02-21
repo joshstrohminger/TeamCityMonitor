@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
 using Windows.Devices.HumanInterfaceDevice;
 using Windows.Storage.Streams;
+using Windows.UI;
 using MVVM;
 
 namespace BlinkStickUniversal
@@ -317,14 +318,14 @@ namespace BlinkStickUniversal
         /// <param name="color">Must be in #rrggbb format</param>
         public async Task SetColorAsync(string color)
         {
-            await SetColorAsync(RgbColor.FromString(color));
+            await SetColorAsync(ColorExtensions.FromString(color));
         }
 
         /// <summary>
         /// Sets the color of the led.
         /// </summary>
         /// <param name="color">Color as RgbColor class.</param>
-        public async Task SetColorAsync(RgbColor color)
+        public async Task SetColorAsync(Color color)
         {
             await SetColorAsync(color.R, color.G, color.B);
         }
@@ -388,7 +389,7 @@ namespace BlinkStickUniversal
         /// <param name="color">Must be in #rrggbb format or named color ("red", "green", "blue")</param>
         public async Task SetColorAsync(byte channel, byte index, string color)
         {
-            await SetColorAsync(channel, index, RgbColor.FromString(color));
+            await SetColorAsync(channel, index, ColorExtensions.FromString(color));
         }
 
         /// <summary>
@@ -397,7 +398,7 @@ namespace BlinkStickUniversal
         /// <param name="channel">Channel (0 - R, 1 - G, 2 - B)</param>
         /// <param name="index">Index of the LED</param>
         /// <param name="color">Color parameter as RgbColor class instance</param>
-        public async Task SetColorAsync(byte channel, byte index, RgbColor color)
+        public async Task SetColorAsync(byte channel, byte index, Color color)
         {
             await SetColorAsync(channel, index, color.R, color.G, color.B);
         }
@@ -593,7 +594,7 @@ namespace BlinkStickUniversal
         /// <param name="color">Color parameter as RgbColor class instance</param>
         /// <param name="repeats">How many times to repeat (default 1)</param>
         /// <param name="delay">Delay delay between on/off sequences (default 500)</param>
-        public async Task BlinkAsync(byte channel, byte index, RgbColor color, int repeats = 1, int delay = 500)
+        public async Task BlinkAsync(byte channel, byte index, Color color, int repeats = 1, int delay = 500)
         {
             await BlinkAsync(channel, index, color.R, color.G, color.B, repeats, delay);
         }
@@ -608,7 +609,7 @@ namespace BlinkStickUniversal
         /// <param name="delay">Delay delay between on/off sequences (default 500)</param>
         public async Task BlinkAsync(byte channel, byte index, string color, int repeats = 1, int delay = 500)
         {
-            await BlinkAsync(channel, index, RgbColor.FromString(color), repeats, delay);
+            await BlinkAsync(channel, index, ColorExtensions.FromString(color), repeats, delay);
         }
 
         /// <summary>
@@ -630,7 +631,7 @@ namespace BlinkStickUniversal
         /// <param name="color">Must be in #rrggbb format or named color ("red", "green", "blue")</param>
         /// <param name="repeats">How many times to repeat (default 1)</param>
         /// <param name="delay">Delay delay between on/off sequences (default 500)</param>
-        public async Task BlinkAsync(RgbColor color, int repeats = 1, int delay = 500)
+        public async Task BlinkAsync(Color color, int repeats = 1, int delay = 500)
         {
             await BlinkAsync(0, 0, color, repeats, delay);
         }
@@ -684,7 +685,7 @@ namespace BlinkStickUniversal
         /// <param name="color">Color parameter as RgbColor class instance</param>
         /// <param name="duration">How long should the morph last</param>
         /// <param name="steps">How many steps for color changes</param>
-        public async Task MorphAsync(byte channel, byte index, RgbColor color, int duration = 1000, int steps = 50)
+        public async Task MorphAsync(byte channel, byte index, Color color, int duration = 1000, int steps = 50)
         {
             await MorphAsync(channel, index, color.R, color.G, color.B, duration, steps);
         }
@@ -699,7 +700,7 @@ namespace BlinkStickUniversal
         /// <param name="steps">How many steps for color changes</param>
         public async Task MorphAsync(byte channel, byte index, string color, int duration = 1000, int steps = 50)
         {
-            await MorphAsync(channel, index, RgbColor.FromString(color), duration, steps);
+            await MorphAsync(channel, index, ColorExtensions.FromString(color), duration, steps);
         }
 
         /// <summary>
@@ -721,7 +722,7 @@ namespace BlinkStickUniversal
         /// <param name="color">Must be in #rrggbb format or named color ("red", "green", "blue")</param>
         /// <param name="duration">How long should the morph last</param>
         /// <param name="steps">How many steps for color changes</param>
-        public async Task MorphAsync(RgbColor color, int duration = 1000, int steps = 50)
+        public async Task MorphAsync(Color color, int duration = 1000, int steps = 50)
         {
             await MorphAsync(0, 0, color, duration, steps);
         }
@@ -783,7 +784,7 @@ namespace BlinkStickUniversal
         /// <param name="repeats">Number of times to repeat.</param>
         /// <param name="duration">How long should the morph last</param>
         /// <param name="steps">How many steps for color changes</param>
-        public async Task PulseAsync(byte channel, byte index, RgbColor color, int repeats = 1, int duration = 1000, int steps = 50)
+        public async Task PulseAsync(byte channel, byte index, Color color, int repeats = 1, int duration = 1000, int steps = 50)
         {
             await PulseAsync(channel, index, color.R, color.G, color.B, repeats, duration, steps);
         }
@@ -799,7 +800,7 @@ namespace BlinkStickUniversal
         /// <param name="steps">How many steps for color changes</param>
         public async Task PulseAsync(byte channel, byte index, string color, int repeats = 1, int duration = 1000, int steps = 50)
         {
-            await PulseAsync(channel, index, RgbColor.FromString(color), repeats, duration, steps);
+            await PulseAsync(channel, index, ColorExtensions.FromString(color), repeats, duration, steps);
         }
 
         /// <summary>
@@ -823,7 +824,7 @@ namespace BlinkStickUniversal
         /// <param name="repeats">Number of times to repeat.</param>
         /// <param name="duration">How long should the morph last</param>
         /// <param name="steps">How many steps for color changes</param>
-        public async Task PulseAsync(RgbColor color, int repeats = 1, int duration = 1000, int steps = 50)
+        public async Task PulseAsync(Color color, int repeats = 1, int duration = 1000, int steps = 50)
         {
             await PulseAsync(0, 0, color, repeats, duration, steps);
         }

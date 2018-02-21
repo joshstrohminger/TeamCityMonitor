@@ -1,4 +1,5 @@
-﻿using BlinkStickUniversal;
+﻿using Windows.UI;
+using BlinkStickUniversal;
 using Interfaces;
 using MVVM;
 
@@ -6,11 +7,11 @@ namespace TeamCityMonitor.ViewModels
 {
     public class LabeledColor : ObservableObject, ILabeledColor
     {
-        private RgbColor _color;
+        private Color _color;
 
         public string Name { get; }
 
-        public RgbColor Color
+        public Color Color
         {
             get => _color;
             set
@@ -23,7 +24,7 @@ namespace TeamCityMonitor.ViewModels
         public LabeledColor(string name, string color)
         {
             Name = name;
-            _color = RgbColor.FromString(color);
+            _color = ColorExtensions.FromString(color);
         }
     }
 }

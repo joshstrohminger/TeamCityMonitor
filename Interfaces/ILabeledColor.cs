@@ -1,10 +1,10 @@
-﻿using BlinkStickUniversal;
+﻿using Windows.UI;
 
 namespace Interfaces
 {
     public interface ILabeledColor
     {
         string Name { get; }
-        RgbColor Color { get; set; }
+        Color Color { get; set; }
     }
 }

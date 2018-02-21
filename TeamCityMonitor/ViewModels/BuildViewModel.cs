@@ -1,5 +1,4 @@
-﻿using BlinkStickUniversal;
-using DesignData;
+﻿using Windows.UI;
 using Interfaces;
 using MVVM;
 
@@ -20,12 +19,12 @@ namespace TeamCityMonitor.ViewModels
             new LabeledColor("Idle", "black")
         };
 
-        public RgbColor Success => Colors[0].Color;
-        public RgbColor Failure => Colors[1].Color;
-        public RgbColor Queued => Colors[2].Color;
-        public RgbColor Running => Colors[3].Color;
-        public RgbColor Investigating => Colors[4].Color;
-        public RgbColor Idle => Colors[5].Color;
+        public Color Success => Colors[0].Color;
+        public Color Failure => Colors[1].Color;
+        public Color Queued => Colors[2].Color;
+        public Color Running => Colors[3].Color;
+        public Color Investigating => Colors[4].Color;
+        public Color Idle => Colors[5].Color;
 
         public string Id
         {
