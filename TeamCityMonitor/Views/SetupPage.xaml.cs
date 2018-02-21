@@ -32,6 +32,8 @@ namespace TeamCityMonitor.Views
             {
                 GoBack = new RelayCommand(NavigateBack);
             }
+            _viewModel = new SetupViewModel(this);
+            DataContext = _viewModel;
         }
 
         private void OnBackRequested(object sender, BackRequestedEventArgs backRequestedEventArgs)
@@ -45,8 +47,6 @@ namespace TeamCityMonitor.Views
 
         private void NavigateBack()
         {
-            _viewModel = null;
-            DataContext = null;
             Frame.GoBack();
         }
 
@@ -62,8 +62,6 @@ namespace TeamCityMonitor.Views
             else if (e.NavigationMode == NavigationMode.New)
             {
                 Device = (BlinkStick) e.Parameter ?? throw new ArgumentNullException(nameof(e.Parameter));
-                _viewModel = new SetupViewModel(this);
-                DataContext = _viewModel;
             }
         }
 
