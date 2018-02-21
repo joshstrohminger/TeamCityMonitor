@@ -12,5 +12,6 @@ namespace Interfaces
         IRelayCommand AddBuild { get; }
         IRelayCommand RemoveBuild { get; }
         IRelayCommand ApplyToAllBuilds { get; }
+        IRelayCommand Monitor { get; }
     }
 }

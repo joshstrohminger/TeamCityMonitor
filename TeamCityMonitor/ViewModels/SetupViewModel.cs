@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using Interfaces;
 using MVVM;
@@ -7,6 +9,7 @@ namespace TeamCityMonitor.ViewModels
 {
     public class SetupViewModel : ObservableObject, ISetupViewModel
     {
+        private readonly ILinearNavigator _linearNavigator;
         private string _host;
         private double _brightness = 100;
         private IBuildViewModel _activeBuild;
@@ -14,6 +17,7 @@ namespace TeamCityMonitor.ViewModels
         public IRelayCommand AddBuild { get; }
         public IRelayCommand RemoveBuild { get; }
         public IRelayCommand ApplyToAllBuilds { get; }
+        public IRelayCommand Monitor { get; }
 
         public IBuildViewModel ActiveBuild
         {
@@ -24,6 +28,7 @@ namespace TeamCityMonitor.ViewModels
                 OnPropertyChanged();
                 RemoveBuild.RaiseCanExecuteChanged();
                 ApplyToAllBuilds.RaiseCanExecuteChanged();
+                Monitor.RaiseCanExecuteChanged();
             }
         }
 
@@ -44,16 +49,28 @@ namespace TeamCityMonitor.ViewModels
             {
                 _host = value;
                 OnPropertyChanged();
+                Monitor.RaiseCanExecuteChanged();
             }
         }
 
         public ObservableCollection<IBuildViewModel> Builds { get; } = new ObservableCollection<IBuildViewModel>();
 
-        public SetupViewModel()
+        public SetupViewModel(ILinearNavigator linearNavigator)
         {
+            _linearNavigator = linearNavigator ?? throw new ArgumentNullException(nameof(linearNavigator));
             AddBuild = new RelayCommand(ExecuteAddBuild);
             RemoveBuild = new RelayCommand(ExecuteRemoveBuild, CanExecuteRemoveBuild);
             ApplyToAllBuilds = new RelayCommand(ExecuteApplyToAllBuilds, CanExecuteApplyToAllBuilds);
+            Monitor = new RelayCommand(ExecuteMonitor, CanExecuteMonitor);
+        }
+
+        private bool CanExecuteMonitor() => Builds.Count >= 1 && !string.IsNullOrWhiteSpace(Host) &&
+                                            Builds.All(build => !string.IsNullOrWhiteSpace(build.Id));
+
+        private void ExecuteMonitor()
+        {
+            if (!CanExecuteMonitor()) return;
+            _linearNavigator.GoForward();
         }
 
         private bool CanExecuteApplyToAllBuilds() => Builds.Count >= 2;
@@ -78,6 +95,7 @@ namespace TeamCityMonitor.ViewModels
             if (!CanExecuteRemoveBuild()) return;
 
             Builds.Remove(ActiveBuild);
+            ActiveBuild.PropertyChanged -= BuildOnPropertyChanged;
             ActiveBuild = null;
         }
 
@@ -86,6 +104,15 @@ namespace TeamCityMonitor.ViewModels
             var build = new BuildViewModel();
             Builds.Add(build);
             ActiveBuild = build;
+            ActiveBuild.PropertyChanged += BuildOnPropertyChanged;
+        }
+
+        private void BuildOnPropertyChanged(object sender, PropertyChangedEventArgs propertyChangedEventArgs)
+        {
+            if (propertyChangedEventArgs.PropertyName == nameof(IBuildViewModel.Id))
+            {
+                Monitor.RaiseCanExecuteChanged();
+            }
         }
     }
 }

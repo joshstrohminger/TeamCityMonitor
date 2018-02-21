@@ -1,6 +1,9 @@
-﻿using Windows.UI.Core;
+﻿using Windows.System.Profile;
+using Windows.UI.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using MVVM;
 
 namespace TeamCityMonitor.Views
 {
@@ -9,10 +12,16 @@ namespace TeamCityMonitor.Views
     /// </summary>
     public sealed partial class MonitorPage : Page
     {
+        public IRelayCommand GoBack { get; }
+
         public MonitorPage()
         {
             InitializeComponent();
             SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
+            if (ViewHelper.IsIot)
+            {
+                GoBack = new RelayCommand(NavigateBack);
+            }
         }
 
         private void OnBackRequested(object sender, BackRequestedEventArgs backRequestedEventArgs)
@@ -20,8 +29,13 @@ namespace TeamCityMonitor.Views
             if (!backRequestedEventArgs.Handled && Frame.CanGoBack)
             {
                 backRequestedEventArgs.Handled = true;
-                Frame.GoBack();
+                NavigateBack();
             }
+        }
+
+        private void NavigateBack()
+        {
+            Frame.GoBack();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)

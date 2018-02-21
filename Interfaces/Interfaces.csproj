@@ -108,6 +108,7 @@
   <ItemGroup>
     <Compile Include="IBuildViewModel.cs" />
     <Compile Include="ILabeledColor.cs" />
+    <Compile Include="ILinearNavigator.cs" />
     <Compile Include="ISetupViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Interfaces.rd.xml" />

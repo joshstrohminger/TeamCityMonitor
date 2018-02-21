@@ -9,22 +9,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:designData="using:DesignData"
     xmlns:converters="using:Microsoft.Toolkit.Uwp.UI.Converters"
-    xmlns:converters1="using:TeamCityMonitor.Converters"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance designData:SetupViewModelDesignData, IsDesignTimeCreatable=True}"
     NavigationCacheMode="Required">
 
-    <Page.BottomAppBar>
-        <CommandBar>
-            <AppBarButton Label="Remove" Icon="Delete"/>
-            <AppBarButton Label="Add" Icon="Add"/>
-            <AppBarButton Label="Monitor" Icon="Play" Click="Monitor_OnClick"/>
-        </CommandBar>
-    </Page.BottomAppBar>
-
     <Page.Resources>
         <converters:StringFormatConverter x:Key="StringFormat"/>
-        <converters1:HideIfNullConverter x:Key="HideIfNull"/>
         <Flyout x:Name="ColorFlyout" Opening="ColorFlyout_OnOpening" Closing="ColorFlyout_OnClosing">
             <Grid>
                 <ColorPicker x:Name="MyColorPicker"
@@ -40,23 +30,27 @@
         </Flyout>
     </Page.Resources>
 
+    <Page.BottomAppBar>
+        <CommandBar>
+            <AppBarButton Label="Back" Icon="Back" Command="{x:Bind GoBack}" Visibility="{x:Bind GoBack, Converter={StaticResource HideIfNull}}"/>
+            <AppBarButton Label="Remove" Icon="Delete" Command="{Binding RemoveBuild, Mode=OneTime}"/>
+            <AppBarButton Label="Add" Icon="Add" Command="{Binding AddBuild, Mode=OneTime}"/>
+            <AppBarButton Label="Copy To All" Icon="Copy" Command="{Binding ApplyToAllBuilds, Mode=OneTime}"/>
+            <AppBarButton Label="Monitor" Icon="Play" Command="{Binding Monitor, Mode=OneTime}"/>
+        </CommandBar>
+    </Page.BottomAppBar>
+
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <TextBox Text="{Binding Host, Mode=TwoWay}" PlaceholderText="Host... 1.2.3.4"/>
+        <TextBox Text="{Binding Host, Mode=TwoWay}" PlaceholderText="Host..."/>
         <StackPanel Orientation="Horizontal">
             <Slider VerticalAlignment="Center" TickPlacement="None" Value="{Binding Brightness, Mode=TwoWay}" Minimum="0" Maximum="100" Width="300"/>
             <TextBlock Text="{Binding Brightness, Mode=OneWay, Converter={StaticResource StringFormat}, ConverterParameter='{}{0:N0}'}" VerticalAlignment="Center" Margin="5"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal">
-            <Button Content="Add" Command="{Binding AddBuild, Mode=OneTime}"/>
-            <Button Content="Remove" Command="{Binding RemoveBuild, Mode=OneTime}"/>
-            <Button Content="Apply to All" Command="{Binding ApplyToAllBuilds, Mode=OneTime}"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <ListView ItemsSource="{Binding Builds, Mode=OneTime}" SelectedValue="{Binding ActiveBuild, Mode=TwoWay}" CanReorderItems="True" MinWidth="100" MinHeight="100">
+            <ListView ItemsSource="{Binding Builds, Mode=OneTime}" SelectedValue="{Binding ActiveBuild, Mode=TwoWay}" CanReorderItems="True" Width="300" MinHeight="100">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Name, Mode=OneWay}"/>
                             <ItemsControl ItemsSource="{Binding Colors, Mode=OneTime}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
@@ -73,6 +67,7 @@
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
+                            <TextBlock Text="{Binding Name, Mode=OneWay}"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>

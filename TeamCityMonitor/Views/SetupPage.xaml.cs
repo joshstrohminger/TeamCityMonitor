@@ -1,5 +1,4 @@
 ﻿using System;
-using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -8,6 +7,7 @@ using Windows.UI.Xaml.Navigation;
 using BlinkStickUniversal;
 using Interfaces;
 using Microsoft.Toolkit.Uwp.Helpers;
+using MVVM;
 using TeamCityMonitor.ViewModels;
 
 namespace TeamCityMonitor.Views
@@ -15,17 +15,23 @@ namespace TeamCityMonitor.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class SetupPage
+    public sealed partial class SetupPage : ILinearNavigator
     {
         public BlinkStick Device { get; private set; }
 
         private ISetupViewModel _viewModel;
         private ILabeledColor _colorTarget;
 
+        public IRelayCommand GoBack { get; }
+
         public SetupPage()
         {
             InitializeComponent();
             SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
+            if (ViewHelper.IsIot)
+            {
+                GoBack = new RelayCommand(NavigateBack);
+            }
         }
 
         private void OnBackRequested(object sender, BackRequestedEventArgs backRequestedEventArgs)
@@ -33,10 +39,15 @@ namespace TeamCityMonitor.Views
             if (!backRequestedEventArgs.Handled && Frame.CanGoBack)
             {
                 backRequestedEventArgs.Handled = true;
-                _viewModel = null;
-                DataContext = null;
-                Frame.GoBack();
+                NavigateBack();
             }
+        }
+
+        private void NavigateBack()
+        {
+            _viewModel = null;
+            DataContext = null;
+            Frame.GoBack();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -51,14 +62,9 @@ namespace TeamCityMonitor.Views
             else if (e.NavigationMode == NavigationMode.New)
             {
                 Device = (BlinkStick) e.Parameter ?? throw new ArgumentNullException(nameof(e.Parameter));
-                _viewModel = new SetupViewModel();
+                _viewModel = new SetupViewModel(this);
                 DataContext = _viewModel;
             }
-        }
-
-        private void Monitor_OnClick(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(MonitorPage));
         }
 
         private void ColorFlyout_OnOpening(object sender, object e)
@@ -92,6 +98,11 @@ namespace TeamCityMonitor.Views
         private void ColorFlyout_OnClosing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
         {
             _colorTarget = null;
+        }
+
+        public bool GoForward()
+        {
+            return Frame.Navigate(typeof(MonitorPage), _viewModel);
         }
     }
 }

@@ -1,8 +1,9 @@
-﻿using Windows.UI;
+﻿using System.ComponentModel;
+using Windows.UI;
 
 namespace Interfaces
 {
-    public interface IBuildViewModel
+    public interface IBuildViewModel : INotifyPropertyChanged
     {
         Color Investigating { get; }
         Color Queued { get; }

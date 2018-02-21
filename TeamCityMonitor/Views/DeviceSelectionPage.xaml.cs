@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Windows.System.Profile;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Navigation;
 using BlinkStickUniversal;

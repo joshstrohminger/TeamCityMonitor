@@ -1,6 +1,8 @@
-﻿using Windows.UI;
-using BlinkStickUniversal;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using Windows.UI;
 using Interfaces;
+using MVVM.Annotations;
 
 namespace DesignData
 {
@@ -24,5 +26,12 @@ namespace DesignData
 
         public string Id { get; set; } = "buildidgoeshere";
         public string Name { get; set; } = "New build";
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

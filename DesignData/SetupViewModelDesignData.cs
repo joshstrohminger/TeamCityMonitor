@@ -21,6 +21,7 @@ namespace DesignData
         public IRelayCommand AddBuild { get; } = new RelayCommand(() => { });
         public IRelayCommand RemoveBuild { get; } = new RelayCommand(() => { });
         public IRelayCommand ApplyToAllBuilds { get; } = new RelayCommand(() => { });
+        public IRelayCommand Monitor { get; } = new RelayCommand(() => { });
 
         public SetupViewModelDesignData()
         {
