@@ -22,6 +22,7 @@ namespace DesignData
         public IRelayCommand RemoveBuild { get; } = new RelayCommand(() => { });
         public IRelayCommand ApplyToAllBuilds { get; } = new RelayCommand(() => { });
         public IRelayCommand Monitor { get; } = new RelayCommand(() => { });
+        public IBlinkStick Device { get; set; }
 
         public SetupViewModelDesignData()
         {

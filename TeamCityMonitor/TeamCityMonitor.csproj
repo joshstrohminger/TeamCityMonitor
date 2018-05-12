@@ -97,8 +97,12 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\ByteArrayToColorConverter.cs" />
     <Compile Include="Converters\HideIfNullConverter.cs" />
     <Compile Include="Converters\IsNullConverter.cs" />
+    <Compile Include="Views\LedIndicator.xaml.cs">
+      <DependentUpon>LedIndicator.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\BuildViewModel.cs" />
     <Compile Include="ViewModels\LabeledColor.cs" />
     <Compile Include="ViewModels\SetupViewModel.cs" />
@@ -135,6 +139,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Views\LedIndicator.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\DeviceSelectionPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

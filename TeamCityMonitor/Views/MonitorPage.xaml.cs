@@ -1,8 +1,11 @@
-﻿using Windows.System.Profile;
+﻿using System;
+using Windows.System.Profile;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using BlinkStickUniversal;
+using Interfaces;
 using MVVM;
 
 namespace TeamCityMonitor.Views
@@ -13,6 +16,7 @@ namespace TeamCityMonitor.Views
     public sealed partial class MonitorPage : Page
     {
         public IRelayCommand GoBack { get; }
+        public ISetupViewModel ViewModel { get; private set; }
 
         public MonitorPage()
         {
@@ -42,6 +46,19 @@ namespace TeamCityMonitor.Views
         {
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             base.OnNavigatedTo(e);
+
+            ViewModel = (ISetupViewModel)e.Parameter ?? throw new ArgumentNullException(nameof(e.Parameter));
+            ViewModel.Device.SetColorsAsync(1, new byte[]
+            {
+                255,0,0,
+                0,255,0,
+                0,0,255,
+                255,255,0,
+                255,0,255,
+                0,255,255,
+                255,255,255,
+                255,100,5
+            });
         }
     }
 }

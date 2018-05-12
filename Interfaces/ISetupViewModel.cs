@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using BlinkStickUniversal;
 using MVVM;
 
 namespace Interfaces
@@ -13,5 +14,6 @@ namespace Interfaces
         IRelayCommand RemoveBuild { get; }
         IRelayCommand ApplyToAllBuilds { get; }
         IRelayCommand Monitor { get; }
+        IBlinkStick Device { get; set; }
     }
 }

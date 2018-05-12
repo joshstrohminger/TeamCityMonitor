@@ -95,13 +95,11 @@ namespace DesignData
 
         public async Task SetColorsAsync(byte channel, byte[] colorData)
         {
-            await Task.Run(() =>
+            for (var i = 0; i < colorData.Length; i++)
             {
-                for (var i = 0; i < colorData.Length; i++)
-                {
-                    CurrentColors[i] = colorData[i];
-                }
-            });
+                CurrentColors[i] = colorData[i];
+            }
+            await Task.Delay(1);
         }
 
         public async Task<byte[]> GetColorsAsync()

@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using BlinkStickUniversal;
 using Interfaces;
 using MVVM;
 
@@ -18,6 +19,7 @@ namespace TeamCityMonitor.ViewModels
         public IRelayCommand RemoveBuild { get; }
         public IRelayCommand ApplyToAllBuilds { get; }
         public IRelayCommand Monitor { get; }
+        public IBlinkStick Device { get; set; }
 
         public IBuildViewModel ActiveBuild
         {

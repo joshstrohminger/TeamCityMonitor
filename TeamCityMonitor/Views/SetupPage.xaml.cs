@@ -18,8 +18,6 @@ namespace TeamCityMonitor.Views
     /// </summary>
     public sealed partial class SetupPage : ILinearNavigator
     {
-        public IBlinkStick Device { get; private set; }
-
         private readonly ISetupViewModel _viewModel;
         private ILabeledColor _colorTarget;
 
@@ -62,7 +60,7 @@ namespace TeamCityMonitor.Views
             }
             else if (e.NavigationMode == NavigationMode.New)
             {
-                Device = (IBlinkStick) e.Parameter ?? throw new ArgumentNullException(nameof(e.Parameter));
+                _viewModel.Device = (IBlinkStick) e.Parameter ?? throw new ArgumentNullException(nameof(e.Parameter));
             }
         }
 
@@ -105,7 +103,7 @@ namespace TeamCityMonitor.Views
                 _colorTarget.Color = hsv.ToArgb();
             }
             ColorFlyout.Hide();
-            await Device.SetColorAsync(dimmedColor);
+            await _viewModel.Device.SetColorAsync(dimmedColor);
         }
 
         private void ColorFlyout_OnClosing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
