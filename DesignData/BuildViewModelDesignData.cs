@@ -12,7 +12,8 @@ namespace DesignData
         public Color Queued => Colors[2].Color;
         public Color Running => Colors[3].Color;
         public Color Failure => Colors[1].Color;
-        public Color Idle => Colors[5].Color;
+        public Color Stale => Colors[5].Color;
+        public Color Idle => Colors[6].Color;
         public Color Success => Colors[0].Color;
 
         public ILabeledColor[] Colors { get; } = {
@@ -21,6 +22,7 @@ namespace DesignData
             new LabeledColorDesignData("Queued", "yellow"),
             new LabeledColorDesignData("Running", "blue"),
             new LabeledColorDesignData("Investigating", "orange"),
+            new LabeledColorDesignData("Stale", "purple"),
             new LabeledColorDesignData("Idle", "black")
         };
 

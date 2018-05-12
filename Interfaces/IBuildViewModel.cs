@@ -11,6 +11,7 @@ namespace Interfaces
         Color Failure { get; }
         Color Idle { get; }
         Color Success { get; }
+        Color Stale { get; }
         ILabeledColor[] Colors { get; }
         string Id { get; set; }
         string Name { get; set; }

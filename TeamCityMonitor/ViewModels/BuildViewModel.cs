@@ -16,6 +16,7 @@ namespace TeamCityMonitor.ViewModels
             new LabeledColor("Queued", "yellow"),
             new LabeledColor("Running", "blue"),
             new LabeledColor("Investigating", "orange"),
+            new LabeledColor("Stale", "purple"),
             new LabeledColor("Idle", "black")
         };
 
@@ -24,7 +25,8 @@ namespace TeamCityMonitor.ViewModels
         public Color Queued => Colors[2].Color;
         public Color Running => Colors[3].Color;
         public Color Investigating => Colors[4].Color;
-        public Color Idle => Colors[5].Color;
+        public Color Stale => Colors[5].Color;
+        public Color Idle => Colors[6].Color;
 
         public string Id
         {
