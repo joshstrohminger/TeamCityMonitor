@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.ServiceModel.Channels;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Navigation;
 using BlinkStickUniversal;
@@ -18,6 +19,7 @@ namespace TeamCityMonitor.Views
     public sealed partial class DeviceSelectionPage : INotifyPropertyChanged
     {
         private IBlinkStick _selectedDevice;
+        private bool _autoRun = App.LocalSettings.AutoRun;
 
         public IBlinkStick SelectedDevice
         {
@@ -29,6 +31,12 @@ namespace TeamCityMonitor.Views
                 OnPropertyChanged();
                 OpenDevice.RaiseCanExecuteChanged();
             }
+        }
+
+        public bool AutoRun
+        {
+            get => _autoRun;
+            set => App.LocalSettings.AutoRun = _autoRun = value;
         }
 
         public DeviceSelectionPage()
@@ -59,6 +67,10 @@ namespace TeamCityMonitor.Views
             }
 
             SelectedDevice = Devices.FirstOrDefault();
+            if (SelectedDevice != null && AutoRun)
+            {
+                ExecuteOpenDevice();
+            }
         }
 
         private bool CanExecuteOpenDevice()

@@ -36,6 +36,7 @@
             <AppBarButton Label="Remove" Icon="Delete" Command="{Binding RemoveBuild, Mode=OneTime}"/>
             <AppBarButton Label="Add" Icon="Add" Command="{Binding AddBuild, Mode=OneTime}"/>
             <AppBarButton Label="Copy To All" Icon="Copy" Command="{Binding ApplyToAllBuilds, Mode=OneTime}"/>
+            <AppBarButton Label="Save as Default" Icon="Save" Command="{x:Bind SaveAsDefault, Mode=OneTime}"/>
             <AppBarButton Label="Monitor" Icon="Play" Command="{Binding Monitor, Mode=OneTime}"/>
         </CommandBar>
     </Page.BottomAppBar>

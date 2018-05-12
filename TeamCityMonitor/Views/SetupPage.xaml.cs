@@ -22,6 +22,7 @@ namespace TeamCityMonitor.Views
         private ILabeledColor _colorTarget;
 
         public IRelayCommand GoBack { get; }
+        public IRelayCommand SaveAsDefault { get; }
 
         public SetupPage()
         {
@@ -31,8 +32,14 @@ namespace TeamCityMonitor.Views
             {
                 GoBack = new RelayCommand(NavigateBack);
             }
+            SaveAsDefault = new RelayCommand(ExecuteSaveAsDefault);
             _viewModel = new SetupViewModel(this);
             DataContext = _viewModel;
+        }
+
+        private void ExecuteSaveAsDefault()
+        {
+            //todo save as the default build configuration
         }
 
         private void OnBackRequested(object sender, BackRequestedEventArgs backRequestedEventArgs)
@@ -61,11 +68,7 @@ namespace TeamCityMonitor.Views
             else if (e.NavigationMode == NavigationMode.New)
             {
                 _viewModel.Device = (IBlinkStick) e.Parameter ?? throw new ArgumentNullException(nameof(e.Parameter));
-                var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-                if (localSettings.Values.TryGetValue(nameof(_viewModel.Host), out var savedHost))
-                {
-                    _viewModel.Host = (string) savedHost;
-                }
+                _viewModel.Host = App.LocalSettings.Host;
             }
         }
 

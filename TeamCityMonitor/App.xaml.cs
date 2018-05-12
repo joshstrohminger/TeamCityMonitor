@@ -7,6 +7,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -31,6 +32,23 @@ namespace TeamCityMonitor
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+        }
+
+        public static class LocalSettings
+        {
+            private static readonly IPropertySet Values = ApplicationData.Current.LocalSettings.Values;
+
+            public static string Host
+            {
+                get => Values.TryGetValue(nameof(Host), out var value) ? (string) value : null;
+                set => Values[nameof(Host)] = value;
+            }
+
+            public static bool AutoRun
+            {
+                get => Values.TryGetValue(nameof(AutoRun), out var value) && (bool) value;
+                set => Values[nameof(AutoRun)] = value;
+            }
         }
 
         /// <summary>
