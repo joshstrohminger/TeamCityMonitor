@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,7 +11,7 @@ using MVVM;
 
 namespace BlinkStickUniversal
 {
-    public class BlinkStick : ObservableObject
+    public class BlinkStick : ObservableObject, IBlinkStick
     {
         #region Fields
 
@@ -44,6 +45,8 @@ namespace BlinkStickUniversal
                 Connected = _device != null;
             }
         }
+
+        public ObservableCollection<byte> CurrentColors { get; } = new ObservableCollection<byte>(new byte[]{0,0,0});
 
         /// <value><c>true</c> if connected; otherwise, <c>false</c>.</value>
         public bool Connected
@@ -256,7 +259,7 @@ namespace BlinkStickUniversal
             return Encoding.ASCII.GetString(dataBytes, 1, dataBytes.Length - 1);
         }
 
-        protected async Task SetInfoBlockAsync(byte id, byte[] data)
+        private async Task SetInfoBlockAsync(byte id, byte[] data)
         {
             if (id == 2 || id == 3)
             {
@@ -300,7 +303,7 @@ namespace BlinkStickUniversal
         /// </summary>
         /// <returns><c>true</c>, if info block was received, <c>false</c> otherwise.</returns>
         /// <param name="id">Identifier.</param>
-        public async Task<byte[]> GetInfoBlockAsync(byte id)
+        private async Task<byte[]> GetInfoBlockAsync(byte id)
         {
             if (!Connected) throw new Exception("Not connected");
             if (id == 2 || id == 3)
@@ -340,6 +343,20 @@ namespace BlinkStickUniversal
         {
             if (Connected)
             {
+                if (CurrentColors.Count == 3)
+                {
+                    CurrentColors[0] = r;
+                    CurrentColors[1] = g;
+                    CurrentColors[2] = b;
+                }
+                else
+                {
+                    var bytes = new [] {r, g, b};
+                    for (var i = 0; i < CurrentColors.Count; i++)
+                    {
+                        CurrentColors[i] = bytes[i % 3];
+                    }
+                }
                 await SetFeatureAsync(new byte[] { 1, r, g, b });
             }
         }
@@ -348,17 +365,17 @@ namespace BlinkStickUniversal
         /// Gets the color of the led.
         /// </summary>
         /// <returns><c>true</c>, if led color was received, <c>false</c> otherwise.</returns>
-        public async Task<Tuple<byte, byte, byte>> GetColorAsync()
+        public async Task<(byte R, byte G, byte B)> GetColorAsync()
         {
             if (!Connected) throw new Exception("Not connected");
             var report = await GetFeatureAsync(0x01);
-            return new Tuple<byte, byte, byte>(report[1], report[2], report[3]);
+            return (report[1], report[2], report[3]);
         }
 
         /// <summary>
         /// Turn BlinkStick off.
         /// </summary>
-        public async Task TurnOff()
+        public async Task TurnOffAsync()
         {
             await SetColorAsync(0, 0, 0);
         }
@@ -377,6 +394,28 @@ namespace BlinkStickUniversal
         {
             if (Connected)
             {
+                if (CurrentColors.Count == 3 && index > 0)
+                {
+                    var bytes = CurrentColors.ToArray();
+                    for (var i = 0; i < (index - 1); i++)
+                    {
+                        foreach (var d in bytes)
+                        {
+                            CurrentColors.Add(d);
+                        }
+                    }
+                }
+                else if (CurrentColors.Count < (index + 1) * 3)
+                {
+                    for (var i = CurrentColors.Count; i < (index + 1) * 3; i++)
+                    {
+                        CurrentColors.Add(0);
+                    }
+                }
+
+                CurrentColors[index * 3] = r;
+                CurrentColors[index * 3 + 1] = g;
+                CurrentColors[index * 3 + 2] = b;
                 await SetFeatureAsync(new byte[] { 5, channel, index, r, g, b });
             }
         }
@@ -412,6 +451,21 @@ namespace BlinkStickUniversal
         {
             var maxLeds = 64;
             byte reportId = 9;
+            if (colorData.Length == CurrentColors.Count)
+            {
+                for (var i = 0; i < colorData.Length; i++)
+                {
+                    CurrentColors[i] = colorData[i];
+                }
+            }
+            else
+            {
+                CurrentColors.Clear();
+                foreach(var d in colorData)
+                {
+                    CurrentColors.Add(d);
+                }
+            }
 
             //Automatically determine the correct report id to send the data to
             if (colorData.Length <= 8 * 3)
@@ -478,7 +532,7 @@ namespace BlinkStickUniversal
         /// Gets led data.
         /// </summary>
         /// <returns><c>true</c>, if led data was received, <c>false</c> otherwise.</returns>
-        public async Task<byte[]> GetColors()
+        public async Task<byte[]> GetColorsAsync()
         {
             if (!Connected) throw new Exception("Not connected");
             var data = await GetFeatureAsync(0x09);
@@ -494,18 +548,18 @@ namespace BlinkStickUniversal
         /// Gets the color of the led.
         /// </summary>
         /// <returns><c>true</c>, if led color was received, <c>false</c> otherwise.</returns>
-        public async Task<Tuple<byte, byte, byte>> GetColorAsync(byte index)
+        public async Task<(byte R, byte G, byte B)> GetColorAsync(byte index)
         {
             if (index == 0)
             {
                 return await GetColorAsync();
             }
 
-            var colors = await GetColors();
+            var colors = await GetColorsAsync();
 
             if (colors.Length >= (index + 1) * 3)
             {
-                return new Tuple<byte, byte, byte>(colors[index * 3 + 1], colors[index * 3], colors[index * 3 + 2]);
+                return (colors[index * 3 + 1], colors[index * 3], colors[index * 3 + 2]);
             }
             throw new Exception("Unable to retreive LED data for index=" + index);
         }
@@ -516,7 +570,7 @@ namespace BlinkStickUniversal
         /// Sets the mode for BlinkStick Pro.
         /// </summary>
         /// <param name="mode">0 - Normal, 1 - Inverse, 2 - WS2812</param>
-        public async Task SetModeAsync(byte mode)
+        private async Task SetModeAsync(byte mode)
         {
             if (Connected)
             {
@@ -527,7 +581,7 @@ namespace BlinkStickUniversal
         /// <summary>
         /// Gets the mode on BlinkStick Pro.
         /// </summary>
-        public async Task<int> GetModeAsync()
+        private async Task<int> GetModeAsync()
         {
             if (!Connected) return -1;
             var data = await GetFeatureAsync(0x04);

@@ -6,7 +6,7 @@ namespace TeamCityMonitor.ViewModels
 {
     public class BuildViewModel : ObservableObject, IBuildViewModel
     {
-        private string _id;
+        private string _id = "1";
         private string _name = "new build";
 
         public ILabeledColor[] Colors { get; } = new[]

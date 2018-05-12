@@ -1,10 +1,12 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
-using Windows.System.Profile;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Navigation;
 using BlinkStickUniversal;
+using DesignData;
+using Interfaces;
 using MVVM;
 using MVVM.Annotations;
 
@@ -15,9 +17,9 @@ namespace TeamCityMonitor.Views
     /// </summary>
     public sealed partial class DeviceSelectionPage : INotifyPropertyChanged
     {
-        private BlinkStick _selectedDevice;
+        private IBlinkStick _selectedDevice;
 
-        public BlinkStick SelectedDevice
+        public IBlinkStick SelectedDevice
         {
             get => _selectedDevice;
             set
@@ -43,7 +45,11 @@ namespace TeamCityMonitor.Views
                 device.CloseDevice();
             }
             Devices.Clear();
+#if ARM
             var devices = await BlinkStick.FindAllAsync();
+#else
+            var devices = new[] {new BlinkStickSimulator()};
+#endif
             foreach (var device in devices)
             {
                 if (await device.OpenDeviceAsync())
@@ -51,6 +57,8 @@ namespace TeamCityMonitor.Views
                     Devices.Add(device);
                 }
             }
+
+            SelectedDevice = Devices.FirstOrDefault();
         }
 
         private bool CanExecuteOpenDevice()
@@ -74,8 +82,8 @@ namespace TeamCityMonitor.Views
         public IRelayCommand OpenDevice { get; }
         public IRelayCommand RefreshDevices { get; }
 
-        public ObservableCollection<BlinkStick> Devices { get; } = new ObservableCollection<BlinkStick>();
-
+        public ObservableCollection<IBlinkStick> Devices { get; } = new ObservableCollection<IBlinkStick>();
+        
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]

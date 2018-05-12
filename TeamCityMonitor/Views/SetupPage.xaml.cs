@@ -1,4 +1,5 @@
 ﻿using System;
+using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -17,9 +18,9 @@ namespace TeamCityMonitor.Views
     /// </summary>
     public sealed partial class SetupPage : ILinearNavigator
     {
-        public BlinkStick Device { get; private set; }
+        public IBlinkStick Device { get; private set; }
 
-        private ISetupViewModel _viewModel;
+        private readonly ISetupViewModel _viewModel;
         private ILabeledColor _colorTarget;
 
         public IRelayCommand GoBack { get; }
@@ -61,7 +62,7 @@ namespace TeamCityMonitor.Views
             }
             else if (e.NavigationMode == NavigationMode.New)
             {
-                Device = (BlinkStick) e.Parameter ?? throw new ArgumentNullException(nameof(e.Parameter));
+                Device = (IBlinkStick) e.Parameter ?? throw new ArgumentNullException(nameof(e.Parameter));
             }
         }
 
@@ -76,19 +77,33 @@ namespace TeamCityMonitor.Views
             if (button.DataContext is ILabeledColor labeledColor)
             {
                 _colorTarget = labeledColor;
-                var hsv = labeledColor.Color.ToHsv();
-                hsv.V = _viewModel.Brightness / 100; // apply the brightness
-                MyColorPicker.Color = hsv.ToArgb();
+                if (labeledColor.Color == Colors.Black)
+                {
+                    MyColorPicker.Color = labeledColor.Color;
+                }
+                else
+                {
+                    var hsv = labeledColor.Color.ToHsv();
+                    hsv.V = _viewModel.Brightness / 100; // apply the brightness
+                    MyColorPicker.Color = hsv.ToArgb();
+                }
             }
         }
 
         private async void ColorAccepted_OnClick(object sender, RoutedEventArgs e)
         {
             var dimmedColor = MyColorPicker.Color;
-            var hsv = dimmedColor.ToHsv();
-            _viewModel.Brightness = hsv.V * 100;
-            hsv.V = 1;
-            _colorTarget.Color = hsv.ToArgb();
+            if (dimmedColor == Colors.Black)
+            {
+                _colorTarget.Color = dimmedColor;
+            }
+            else
+            {
+                var hsv = dimmedColor.ToHsv();
+                _viewModel.Brightness = hsv.V * 100;
+                hsv.V = 1;
+                _colorTarget.Color = hsv.ToArgb();
+            }
             ColorFlyout.Hide();
             await Device.SetColorAsync(dimmedColor);
         }

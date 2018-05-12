@@ -10,7 +10,7 @@ namespace TeamCityMonitor.ViewModels
     public class SetupViewModel : ObservableObject, ISetupViewModel
     {
         private readonly ILinearNavigator _linearNavigator;
-        private string _host;
+        private string _host = "1.2.3.4";
         private double _brightness = 100;
         private IBuildViewModel _activeBuild;
 
@@ -62,6 +62,8 @@ namespace TeamCityMonitor.ViewModels
             RemoveBuild = new RelayCommand(ExecuteRemoveBuild, CanExecuteRemoveBuild);
             ApplyToAllBuilds = new RelayCommand(ExecuteApplyToAllBuilds, CanExecuteApplyToAllBuilds);
             Monitor = new RelayCommand(ExecuteMonitor, CanExecuteMonitor);
+
+            ExecuteAddBuild();
         }
 
         private bool CanExecuteMonitor() => Builds.Count >= 1 && !string.IsNullOrWhiteSpace(Host) &&
