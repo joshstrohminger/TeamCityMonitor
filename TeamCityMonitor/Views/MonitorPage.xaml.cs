@@ -2,6 +2,7 @@
 using Windows.System.Profile;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using BlinkStickUniversal;
@@ -15,8 +16,9 @@ namespace TeamCityMonitor.Views
     /// </summary>
     public sealed partial class MonitorPage : Page
     {
-        public IRelayCommand GoBack { get; }
         public ISetupViewModel ViewModel { get; private set; }
+
+        public IRelayCommand GoBack { get; }
 
         public MonitorPage()
         {
@@ -59,6 +61,9 @@ namespace TeamCityMonitor.Views
                 255,255,255,
                 255,100,5
             });
+            DataContext = ViewModel;
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            localSettings.Values[nameof(ViewModel.Host)] = ViewModel.Host;
         }
     }
 }

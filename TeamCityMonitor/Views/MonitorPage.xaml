@@ -8,7 +8,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:converters="using:Microsoft.Toolkit.Uwp.UI.Converters"
-    mc:Ignorable="d">
+    xmlns:i="using:Interfaces"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance i:ISetupViewModel, IsDesignTimeCreatable=False}">
     
     <Page.Resources>
         <converters:StringFormatConverter x:Key="StringFormat"/>
@@ -22,35 +24,33 @@
         </CommandBar>
     </Page.BottomAppBar>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-            <TextBlock Text="Monitor" FontSize="50" HorizontalAlignment="Center"/>
-            <StackPanel Orientation="Horizontal">
-                <Slider VerticalAlignment="Center" TickPlacement="None" Value="{x:Bind ViewModel.Brightness, Mode=TwoWay}" Minimum="0" Maximum="100" Width="300"/>
-                <TextBlock Text="{x:Bind ViewModel.Brightness, Mode=OneWay, Converter={StaticResource StringFormat}, ConverterParameter='{}{0:N0}'}" VerticalAlignment="Center" Margin="5"/>
-            </StackPanel>
-            <Grid Width="300" Height="300" Margin="10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <local:LedIndicator Grid.Row="3" Grid.Column="1" R="{x:Bind ViewModel.Device.CurrentColors[0], Mode=OneWay}" G="{x:Bind ViewModel.Device.CurrentColors[1], Mode=OneWay}" B="{x:Bind ViewModel.Device.CurrentColors[2], Mode=OneWay}" Brightness="{x:Bind ViewModel.Brightness, Mode=OneWay}"/>
-                <local:LedIndicator Grid.Row="2" Grid.Column="0" R="{x:Bind ViewModel.Device.CurrentColors[3], Mode=OneWay}" G="{x:Bind ViewModel.Device.CurrentColors[4], Mode=OneWay}" B="{x:Bind ViewModel.Device.CurrentColors[5], Mode=OneWay}" Brightness="{x:Bind ViewModel.Brightness, Mode=OneWay}"/>
-                <local:LedIndicator Grid.Row="1" Grid.Column="0" R="{x:Bind ViewModel.Device.CurrentColors[6], Mode=OneWay}" G="{x:Bind ViewModel.Device.CurrentColors[7], Mode=OneWay}" B="{x:Bind ViewModel.Device.CurrentColors[8], Mode=OneWay}" Brightness="{x:Bind ViewModel.Brightness, Mode=OneWay}"/>
-                <local:LedIndicator Grid.Row="0" Grid.Column="1" R="{x:Bind ViewModel.Device.CurrentColors[9], Mode=OneWay}" G="{x:Bind ViewModel.Device.CurrentColors[10], Mode=OneWay}" B="{x:Bind ViewModel.Device.CurrentColors[11], Mode=OneWay}" Brightness="{x:Bind ViewModel.Brightness, Mode=OneWay}"/>
-                <local:LedIndicator Grid.Row="0" Grid.Column="2" R="{x:Bind ViewModel.Device.CurrentColors[12], Mode=OneWay}" G="{x:Bind ViewModel.Device.CurrentColors[13], Mode=OneWay}" B="{x:Bind ViewModel.Device.CurrentColors[14], Mode=OneWay}" Brightness="{x:Bind ViewModel.Brightness, Mode=OneWay}"/>
-                <local:LedIndicator Grid.Row="1" Grid.Column="3" R="{x:Bind ViewModel.Device.CurrentColors[15], Mode=OneWay}" G="{x:Bind ViewModel.Device.CurrentColors[16], Mode=OneWay}" B="{x:Bind ViewModel.Device.CurrentColors[17], Mode=OneWay}" Brightness="{x:Bind ViewModel.Brightness, Mode=OneWay}"/>
-                <local:LedIndicator Grid.Row="2" Grid.Column="3" R="{x:Bind ViewModel.Device.CurrentColors[18], Mode=OneWay}" G="{x:Bind ViewModel.Device.CurrentColors[19], Mode=OneWay}" B="{x:Bind ViewModel.Device.CurrentColors[20], Mode=OneWay}" Brightness="{x:Bind ViewModel.Brightness, Mode=OneWay}"/>
-                <local:LedIndicator Grid.Row="3" Grid.Column="2" R="{x:Bind ViewModel.Device.CurrentColors[21], Mode=OneWay}" G="{x:Bind ViewModel.Device.CurrentColors[22], Mode=OneWay}" B="{x:Bind ViewModel.Device.CurrentColors[23], Mode=OneWay}" Brightness="{x:Bind ViewModel.Brightness, Mode=OneWay}"/>
-            </Grid>
+    <RelativePanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <StackPanel Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignRightWithPanel="True">
+            <Slider VerticalAlignment="Center" TickPlacement="None" Value="{Binding Brightness, Mode=TwoWay}" Minimum="0" Maximum="100" Width="300"/>
+            <Border Background="DarkGray" CornerRadius="15" BorderBrush="#333" BorderThickness="5">
+                <Grid Width="300" Height="300" Margin="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <local:LedIndicator Grid.Row="3" Grid.Column="1" R="{x:Bind ViewModel.Device.CurrentColors[0], Mode=OneWay}" G="{x:Bind ViewModel.Device.CurrentColors[1], Mode=OneWay}" B="{x:Bind ViewModel.Device.CurrentColors[2], Mode=OneWay}" Brightness="{x:Bind ViewModel.Brightness, Mode=OneWay}"/>
+                    <local:LedIndicator Grid.Row="2" Grid.Column="0" R="{x:Bind ViewModel.Device.CurrentColors[3], Mode=OneWay}" G="{x:Bind ViewModel.Device.CurrentColors[4], Mode=OneWay}" B="{x:Bind ViewModel.Device.CurrentColors[5], Mode=OneWay}" Brightness="{x:Bind ViewModel.Brightness, Mode=OneWay}"/>
+                    <local:LedIndicator Grid.Row="1" Grid.Column="0" R="{x:Bind ViewModel.Device.CurrentColors[6], Mode=OneWay}" G="{x:Bind ViewModel.Device.CurrentColors[7], Mode=OneWay}" B="{x:Bind ViewModel.Device.CurrentColors[8], Mode=OneWay}" Brightness="{x:Bind ViewModel.Brightness, Mode=OneWay}"/>
+                    <local:LedIndicator Grid.Row="0" Grid.Column="1" R="{x:Bind ViewModel.Device.CurrentColors[9], Mode=OneWay}" G="{x:Bind ViewModel.Device.CurrentColors[10], Mode=OneWay}" B="{x:Bind ViewModel.Device.CurrentColors[11], Mode=OneWay}" Brightness="{x:Bind ViewModel.Brightness, Mode=OneWay}"/>
+                    <local:LedIndicator Grid.Row="0" Grid.Column="2" R="{x:Bind ViewModel.Device.CurrentColors[12], Mode=OneWay}" G="{x:Bind ViewModel.Device.CurrentColors[13], Mode=OneWay}" B="{x:Bind ViewModel.Device.CurrentColors[14], Mode=OneWay}" Brightness="{x:Bind ViewModel.Brightness, Mode=OneWay}"/>
+                    <local:LedIndicator Grid.Row="1" Grid.Column="3" R="{x:Bind ViewModel.Device.CurrentColors[15], Mode=OneWay}" G="{x:Bind ViewModel.Device.CurrentColors[16], Mode=OneWay}" B="{x:Bind ViewModel.Device.CurrentColors[17], Mode=OneWay}" Brightness="{x:Bind ViewModel.Brightness, Mode=OneWay}"/>
+                    <local:LedIndicator Grid.Row="2" Grid.Column="3" R="{x:Bind ViewModel.Device.CurrentColors[18], Mode=OneWay}" G="{x:Bind ViewModel.Device.CurrentColors[19], Mode=OneWay}" B="{x:Bind ViewModel.Device.CurrentColors[20], Mode=OneWay}" Brightness="{x:Bind ViewModel.Brightness, Mode=OneWay}"/>
+                    <local:LedIndicator Grid.Row="3" Grid.Column="2" R="{x:Bind ViewModel.Device.CurrentColors[21], Mode=OneWay}" G="{x:Bind ViewModel.Device.CurrentColors[22], Mode=OneWay}" B="{x:Bind ViewModel.Device.CurrentColors[23], Mode=OneWay}" Brightness="{x:Bind ViewModel.Brightness, Mode=OneWay}"/>
+                </Grid>
+            </Border>
         </StackPanel>
-    </Grid>
+    </RelativePanel>
 </Page>

@@ -61,6 +61,11 @@ namespace TeamCityMonitor.Views
             else if (e.NavigationMode == NavigationMode.New)
             {
                 _viewModel.Device = (IBlinkStick) e.Parameter ?? throw new ArgumentNullException(nameof(e.Parameter));
+                var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+                if (localSettings.Values.TryGetValue(nameof(_viewModel.Host), out var savedHost))
+                {
+                    _viewModel.Host = (string) savedHost;
+                }
             }
         }
 

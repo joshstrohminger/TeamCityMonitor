@@ -11,7 +11,7 @@ namespace TeamCityMonitor.ViewModels
     public class SetupViewModel : ObservableObject, ISetupViewModel
     {
         private readonly ILinearNavigator _linearNavigator;
-        private string _host = "1.2.3.4";
+        private string _host;
         private double _brightness = 100;
         private IBuildViewModel _activeBuild;
 

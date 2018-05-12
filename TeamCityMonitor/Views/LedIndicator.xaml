@@ -8,5 +8,5 @@
     mc:Ignorable="d"
     d:DesignHeight="50"
     d:DesignWidth="50">
-    <Rectangle Fill="{x:Bind Brush, Mode=OneWay}" Stroke="#333" StrokeThickness="3" RadiusX="5" RadiusY="5"/>
+    <Rectangle Fill="{x:Bind Brush, Mode=OneWay}" Stroke="#333" StrokeThickness="3" RadiusX="5" RadiusY="5" Margin="2"/>
 </UserControl>
