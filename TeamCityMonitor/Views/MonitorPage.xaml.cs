@@ -62,8 +62,6 @@ namespace TeamCityMonitor.Views
                 255,100,5
             });
             DataContext = ViewModel;
-            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
-            localSettings.Values[nameof(ViewModel.Host)] = ViewModel.Host;
         }
     }
 }

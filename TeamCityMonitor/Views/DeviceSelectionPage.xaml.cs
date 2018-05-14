@@ -67,10 +67,6 @@ namespace TeamCityMonitor.Views
             }
 
             SelectedDevice = Devices.FirstOrDefault();
-            if (SelectedDevice != null && AutoRun)
-            {
-                ExecuteOpenDevice();
-            }
         }
 
         private bool CanExecuteOpenDevice()
@@ -81,7 +77,7 @@ namespace TeamCityMonitor.Views
         private void ExecuteOpenDevice()
         {
             if (!CanExecuteOpenDevice()) return;
-            Frame.Navigate(typeof(SetupPage), SelectedDevice);
+            Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => Frame.Navigate(typeof(SetupPage), SelectedDevice));
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -89,6 +85,12 @@ namespace TeamCityMonitor.Views
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
             base.OnNavigatedTo(e);
             ExecuteRefreshDevices();
+
+            if (SelectedDevice != null && AutoRun && e.NavigationMode == NavigationMode.New)
+            {
+                //todo need to ensure this doesn't happen when navigating back to a page
+                ExecuteOpenDevice();
+            }
         }
 
         public IRelayCommand OpenDevice { get; }

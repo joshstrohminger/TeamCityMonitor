@@ -30,7 +30,8 @@ namespace DesignData
         public int Mode { get; set; }
         public async Task<bool> OpenDeviceAsync()
         {
-            return await Task.Run(() => Connected = true);
+            Connected = true;
+            return await Task.FromResult(Connected);
         }
 
         public void CloseDevice()
@@ -52,20 +53,18 @@ namespace DesignData
         {
             if (Connected)
             {
-                await Task.Run(() =>
+                var bytes = new[] {r, g, b};
+                for (var i = 0; i < CurrentColors.Count; i++)
                 {
-                    var bytes = new[] {r, g, b};
-                    for (var i = 0; i < CurrentColors.Count; i++)
-                    {
-                        CurrentColors[i] = bytes[i % 3];
-                    }
-                });
+                    CurrentColors[i] = bytes[i % 3];
+                }
+                await Task.Delay(0);
             }
         }
 
         public async Task<(byte R, byte G, byte B)> GetColorAsync()
         {
-            return await Task.Run(() => (CurrentColors[0], CurrentColors[1], CurrentColors[2]));
+            return await Task.FromResult((CurrentColors[0], CurrentColors[1], CurrentColors[2]));
         }
 
         public async Task TurnOffAsync()
@@ -75,12 +74,10 @@ namespace DesignData
 
         public async Task SetColorAsync(byte channel, byte index, byte r, byte g, byte b)
         {
-            await Task.Run(() =>
-            {
-                CurrentColors[index * 3] = r;
-                CurrentColors[index * 3 + 1] = g;
-                CurrentColors[index * 3 + 2] = b;
-            });
+            CurrentColors[index * 3] = r;
+            CurrentColors[index * 3 + 1] = g;
+            CurrentColors[index * 3 + 2] = b;
+            await Task.Delay(0);
         }
 
         public async Task SetColorAsync(byte channel, byte index, string color)
@@ -104,12 +101,12 @@ namespace DesignData
 
         public async Task<byte[]> GetColorsAsync()
         {
-            return await Task.Run(() => CurrentColors.ToArray());
+            return await Task.FromResult(CurrentColors.ToArray());
         }
 
         public async Task<(byte R, byte G, byte B)> GetColorAsync(byte index)
         {
-            return await Task.Run(() => (CurrentColors[index * 3], CurrentColors[index * 3 + 1], CurrentColors[index * 3 + 2]));
+            return await Task.FromResult((CurrentColors[index * 3], CurrentColors[index * 3 + 1], CurrentColors[index * 3 + 2]));
         }
 
         public void Stop()

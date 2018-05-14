@@ -64,8 +64,6 @@ namespace TeamCityMonitor.ViewModels
             RemoveBuild = new RelayCommand(ExecuteRemoveBuild, CanExecuteRemoveBuild);
             ApplyToAllBuilds = new RelayCommand(ExecuteApplyToAllBuilds, CanExecuteApplyToAllBuilds);
             Monitor = new RelayCommand(ExecuteMonitor, CanExecuteMonitor);
-
-            ExecuteAddBuild();
         }
 
         private bool CanExecuteMonitor() => Builds.Count >= 1 && !string.IsNullOrWhiteSpace(Host) &&

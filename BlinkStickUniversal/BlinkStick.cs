@@ -723,9 +723,9 @@ namespace BlinkStickUniversal
             for (var i = 1; i <= steps; i++)
             {
                 await InternalSetColorAsync(channel, index,
-                    (byte)(1.0 * color.Item1 + (r - color.Item1) / 1.0 / steps * i),
-                    (byte)(1.0 * color.Item2 + (g - color.Item2) / 1.0 / steps * i),
-                    (byte)(1.0 * color.Item3 + (b - color.Item3) / 1.0 / steps * i));
+                    (byte)(1.0 * color.R + (r - color.R) / 1.0 / steps * i),
+                    (byte)(1.0 * color.G + (g - color.G) / 1.0 / steps * i),
+                    (byte)(1.0 * color.B + (b - color.B) / 1.0 / steps * i));
 
                 await Task.Delay(duration / steps);
             }

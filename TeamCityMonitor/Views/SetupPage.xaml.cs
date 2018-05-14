@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -32,14 +34,15 @@ namespace TeamCityMonitor.Views
             {
                 GoBack = new RelayCommand(NavigateBack);
             }
-            SaveAsDefault = new RelayCommand(ExecuteSaveAsDefault);
+            SaveAsDefault = new RelayCommand(async () => await ExecuteSaveAsDefault());
             _viewModel = new SetupViewModel(this);
             DataContext = _viewModel;
         }
 
-        private void ExecuteSaveAsDefault()
+        private async Task ExecuteSaveAsDefault()
         {
-            //todo save as the default build configuration
+            App.LocalSettings.Host = _viewModel.Host;
+            await App.LocalSettings.SaveBuilds(_viewModel.Builds.OfType<BuildViewModel>().ToArray());
         }
 
         private void OnBackRequested(object sender, BackRequestedEventArgs backRequestedEventArgs)
@@ -56,7 +59,7 @@ namespace TeamCityMonitor.Views
             Frame.GoBack();
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             base.OnNavigatedTo(e);
@@ -68,7 +71,24 @@ namespace TeamCityMonitor.Views
             else if (e.NavigationMode == NavigationMode.New)
             {
                 _viewModel.Device = (IBlinkStick) e.Parameter ?? throw new ArgumentNullException(nameof(e.Parameter));
+
                 _viewModel.Host = App.LocalSettings.Host;
+                _viewModel.Brightness = App.LocalSettings.Brightness;
+                _viewModel.Builds.Clear();
+                foreach (var build in await App.LocalSettings.GetSavedBuilds())
+                {
+                    _viewModel.Builds.Add(build);
+                }
+
+                if (_viewModel.Builds.Count == 0)
+                {
+                    _viewModel.AddBuild.Execute(null);
+                }
+
+                if (App.LocalSettings.AutoRun)
+                {
+                    _viewModel.Monitor.Execute(null);
+                }
             }
         }
 
@@ -119,9 +139,9 @@ namespace TeamCityMonitor.Views
             _colorTarget = null;
         }
 
-        public bool GoForward()
+        public void GoForward()
         {
-            return Frame.Navigate(typeof(MonitorPage), _viewModel);
+            Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => Frame.Navigate(typeof(MonitorPage), _viewModel));
         }
     }
 }

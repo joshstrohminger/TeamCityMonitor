@@ -1,16 +1,20 @@
-﻿using Windows.UI;
+﻿using System.Runtime.Serialization;
+using Windows.UI;
 using BlinkStickUniversal;
 using Interfaces;
 using MVVM;
 
 namespace TeamCityMonitor.ViewModels
 {
+    [DataContract]
     public class LabeledColor : ObservableObject, ILabeledColor
     {
         private Color _color;
 
-        public string Name { get; }
+        [DataMember]
+        public string Name { get; protected set; }
 
+        [DataMember]
         public Color Color
         {
             get => _color;

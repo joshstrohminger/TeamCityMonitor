@@ -2,6 +2,6 @@
 {
     public interface ILinearNavigator
     {
-        bool GoForward();
+        void GoForward();
     }
 }

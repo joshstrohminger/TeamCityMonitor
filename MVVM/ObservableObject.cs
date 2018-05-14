@@ -1,10 +1,12 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 using MVVM.Annotations;
 
 namespace MVVM
 {
+    [DataContract]
     public class ObservableObject : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
