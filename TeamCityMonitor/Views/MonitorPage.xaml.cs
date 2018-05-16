@@ -7,6 +7,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using BlinkStickUniversal;
 using Interfaces;
+using Microsoft.Toolkit.Uwp.UI.Extensions;
 using MVVM;
 using TeamCityMonitor.ViewModels;
 
@@ -49,6 +50,7 @@ namespace TeamCityMonitor.Views
         {
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             base.OnNavigatedTo(e);
+            ApplicationViewExtensions.SetTitle(this, "Monitor");
 
             ViewModel = (ISetupViewModel)e.Parameter ?? throw new ArgumentNullException(nameof(e.Parameter));
             ViewModel.Device.SetColorsAsync(1, new byte[]

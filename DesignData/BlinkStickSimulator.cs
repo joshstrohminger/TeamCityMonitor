@@ -208,5 +208,7 @@ namespace DesignData
         {
             throw new NotImplementedException();
         }
+
+        protected virtual void OnOnError(string msg, Exception e) => OnError?.Invoke(msg, e);
     }
 }

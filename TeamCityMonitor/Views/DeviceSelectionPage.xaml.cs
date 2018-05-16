@@ -1,13 +1,14 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.ServiceModel.Channels;
+using System.Threading.Tasks;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Navigation;
 using BlinkStickUniversal;
 using DesignData;
-using Interfaces;
+using Microsoft.Toolkit.Uwp.UI.Extensions;
 using MVVM;
 using MVVM.Annotations;
 
@@ -41,7 +42,7 @@ namespace TeamCityMonitor.Views
 
         public DeviceSelectionPage()
         {
-            OpenDevice = new RelayCommand(ExecuteOpenDevice, CanExecuteOpenDevice);
+            OpenDevice = new RelayCommand(async () => await ExecuteOpenDeviceAsync(), CanExecuteOpenDevice);
             RefreshDevices = new RelayCommand(ExecuteRefreshDevices);
             InitializeComponent();
         }
@@ -74,22 +75,22 @@ namespace TeamCityMonitor.Views
             return SelectedDevice != null;
         }
 
-        private void ExecuteOpenDevice()
+        private async Task ExecuteOpenDeviceAsync()
         {
             if (!CanExecuteOpenDevice()) return;
-            Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => Frame.Navigate(typeof(SetupPage), SelectedDevice));
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => Frame.Navigate(typeof(SetupPage), SelectedDevice));
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+            ApplicationViewExtensions.SetTitle(this, "Select Device");
             base.OnNavigatedTo(e);
             ExecuteRefreshDevices();
 
             if (SelectedDevice != null && AutoRun && e.NavigationMode == NavigationMode.New)
             {
-                //todo need to ensure this doesn't happen when navigating back to a page
-                ExecuteOpenDevice();
+                await ExecuteOpenDeviceAsync();
             }
         }
 

@@ -9,7 +9,7 @@ namespace TeamCityMonitor.ViewModels
         private string _id;
         private string _name = "new build";
 
-        public ILabeledColor[] Colors { get; } = new[]
+        public ILabeledColor[] Colors { get; } =
         {
             new LabeledColor("Success", "green"),
             new LabeledColor("Failure", "red"),
@@ -31,21 +31,13 @@ namespace TeamCityMonitor.ViewModels
         public string Id
         {
             get => _id;
-            set
-            {
-                _id = value;
-                OnPropertyChanged();
-            }
+            set => UpdateOnPropertyChanged(ref _id, value);
         }
 
         public string Name
         {
             get => _name;
-            set
-            {
-                _name = value;
-                OnPropertyChanged();
-            }
+            set => UpdateOnPropertyChanged(ref _name, value);
         }
     }
 }

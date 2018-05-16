@@ -10,6 +10,7 @@ using Windows.UI.Xaml.Navigation;
 using BlinkStickUniversal;
 using Interfaces;
 using Microsoft.Toolkit.Uwp.Helpers;
+using Microsoft.Toolkit.Uwp.UI.Extensions;
 using MVVM;
 using TeamCityMonitor.ViewModels;
 
@@ -63,7 +64,8 @@ namespace TeamCityMonitor.Views
         {
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             base.OnNavigatedTo(e);
-            
+            ApplicationViewExtensions.SetTitle(this, "Setup");
+
             if (e.NavigationMode == NavigationMode.Back)
             {
                 //todo handle navigating back from the monitor page
@@ -139,9 +141,9 @@ namespace TeamCityMonitor.Views
             _colorTarget = null;
         }
 
-        public void GoForward()
+        public async void GoForward()
         {
-            Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => Frame.Navigate(typeof(MonitorPage), _viewModel));
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => Frame.Navigate(typeof(MonitorPage), _viewModel));
         }
     }
 }
