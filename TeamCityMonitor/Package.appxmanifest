@@ -24,6 +24,7 @@
   </Applications>
   <Capabilities>
     <Capability Name="internetClient" />
+    <Capability Name="privateNetworkClientServer" />
     <DeviceCapability Name="humaninterfacedevice">
       <Device Id="vidpid:20A0 41E5">
         <Function Type="usage:FF00 0001" />

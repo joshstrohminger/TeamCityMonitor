@@ -8,6 +8,7 @@ using Windows.UI.Xaml.Navigation;
 using BlinkStickUniversal;
 using Interfaces;
 using MVVM;
+using TeamCityMonitor.ViewModels;
 
 namespace TeamCityMonitor.Views
 {
@@ -62,6 +63,8 @@ namespace TeamCityMonitor.Views
                 255,100,5
             });
             DataContext = ViewModel;
+            var response = new TeamCityApi(ViewModel.Host, ViewModel.Builds[0].Id).Refresh();
+            ResponseTextBlock.Text = response.ErrorMessage ?? response.Name;
         }
     }
 }

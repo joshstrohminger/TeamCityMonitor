@@ -115,7 +115,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.0.6</Version>
+      <Version>6.1.4</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Toolkit.Uwp">
+      <Version>2.2.0</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -123,11 +126,6 @@
       <Project>{B41C688E-6DAB-42E2-8BE7-3F9E1C2FAEAC}</Project>
       <Name>MVVM</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Microsoft.Toolkit.Uwp">
-      <HintPath>..\..\..\..\.nuget\packages\microsoft.toolkit.uwp\2.1.1\lib\uap10.0\Microsoft.Toolkit.Uwp.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
