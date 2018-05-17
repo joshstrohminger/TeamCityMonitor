@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Core;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Api;
 using BlinkStickUniversal;
@@ -61,7 +63,7 @@ namespace TeamCityMonitor.ViewModels
 
         public MonitorViewModel(ISetupViewModel setup)
         {
-            if(setup is null) throw new ArgumentNullException(nameof(setup));
+            if (setup is null) throw new ArgumentNullException(nameof(setup));
 
             Device = setup.Device;
             Host = setup.Host;
@@ -73,6 +75,8 @@ namespace TeamCityMonitor.ViewModels
             _timer = new DispatcherTimer {Interval = TimeSpan.FromMinutes(1)};
             _timer.Tick += async (sender, o) => await ExecuteRefreshAsync();
             _timer.Start();
+
+            ExecuteRefreshAsync();
         }
 
         private async Task ExecuteRefreshAsync()
@@ -80,7 +84,7 @@ namespace TeamCityMonitor.ViewModels
             foreach (var buildMonitor in BuildMonitors)
             {
                 var summary = await buildMonitor.Api.RefreshAsync();
-                buildMonitor.Status.Update(summary);
+                await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => buildMonitor.Status.Update(summary));
                 // todo should colors be updated here?
             }
         }

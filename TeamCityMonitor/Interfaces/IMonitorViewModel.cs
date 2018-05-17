@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using BlinkStickUniversal;
 using MVVM;
 
 namespace TeamCityMonitor.Interfaces
 {
-    public interface IMonitorViewModel : IDisposable
+    public interface IMonitorViewModel : IDisposable, INotifyPropertyChanged
     {
         IBlinkStick Device { get; }
         string Host { get; }

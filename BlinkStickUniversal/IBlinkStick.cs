@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Windows.UI;
-using MVVM.Annotations;
+using System.ComponentModel;
 
 namespace BlinkStickUniversal
 {
-    public interface IBlinkStick
+    public interface IBlinkStick : INotifyPropertyChanged
     {
         event BlinkStick.ErrorHandler OnError;
 

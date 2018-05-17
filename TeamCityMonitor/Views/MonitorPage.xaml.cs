@@ -44,6 +44,7 @@ namespace TeamCityMonitor.Views
 
         private void NavigateBack()
         {
+            ViewModel.Dispose();
             Frame.GoBack();
         }
 
@@ -52,7 +53,7 @@ namespace TeamCityMonitor.Views
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             base.OnNavigatedTo(e);
             ApplicationViewExtensions.SetTitle(this, "Monitor");
-
+            
             var setup = (ISetupViewModel)e.Parameter ?? throw new ArgumentNullException(nameof(e.Parameter));
             ViewModel = new MonitorViewModel(setup);
             DataContext = ViewModel;

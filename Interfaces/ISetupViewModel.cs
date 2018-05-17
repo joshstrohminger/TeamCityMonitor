@@ -1,10 +1,11 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using BlinkStickUniversal;
 using MVVM;
 
 namespace Interfaces
 {
-    public interface ISetupViewModel
+    public interface ISetupViewModel : INotifyPropertyChanged
     {
         string Host { get; set; }
         ObservableCollection<IBuildViewModel> Builds { get; }

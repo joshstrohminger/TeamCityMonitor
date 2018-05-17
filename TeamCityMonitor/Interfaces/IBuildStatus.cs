@@ -10,6 +10,7 @@ namespace TeamCityMonitor.Interfaces
         bool IsSuccessful { get; }
         string StatusText { get; }
         string LastChanged { get; }
+        string LastUpdated { get; }
         string RunningUrl { get; }
         bool IsRunning { get; }
         string OverallUrl { get;}

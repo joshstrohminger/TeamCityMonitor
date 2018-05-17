@@ -15,6 +15,7 @@ namespace TeamCityMonitor.ViewModels
 
         private readonly TimeSpan _staleCriteria = TimeSpan.FromHours(5);
         private readonly DispatcherTimer _timer;
+        private DateTime? _lastUpdateTime;
             
         #endregion
 
@@ -34,6 +35,7 @@ namespace TeamCityMonitor.ViewModels
         private string _errorMessage;
         private DateTime? _timeLastChanged;
         private bool _isApiError;
+        private string _lastUpdated = "never";
 
         #endregion
 
@@ -120,6 +122,12 @@ namespace TeamCityMonitor.ViewModels
             private set => UpdateOnPropertyChanged(ref _isApiError, value);
         }
 
+        public string LastUpdated
+        {
+            get => _lastUpdated;
+            private set => UpdateOnPropertyChanged(ref _lastUpdated, value);
+        }
+
         #endregion
     
         #region Construction
@@ -144,6 +152,7 @@ namespace TeamCityMonitor.ViewModels
 
             ErrorMessage = summary.ErrorMessage;
             IsApiError = !summary.IsSuccessful;
+            _lastUpdateTime = DateTime.Now;
             if(summary.IsSuccessful)
             {
                 Investigator = summary.Investigations?.Investigations?.FirstOrDefault()?.Assignee?.Name;
@@ -174,9 +183,10 @@ namespace TeamCityMonitor.ViewModels
 
         private void RefreshTimeDependentProperties()
         {
+            var now = DateTime.Now;
             if(_timeLastChanged.HasValue)
             {
-                var age = DateTime.Now - _timeLastChanged.Value;
+                 var age = now - _timeLastChanged.Value;
                 IsStale = age > _staleCriteria;
                 LastChanged = GetAgeString(age);
             }
@@ -184,6 +194,12 @@ namespace TeamCityMonitor.ViewModels
             {
                 IsStale = true;
                 LastChanged = "never";
+            }
+
+            if (_lastUpdateTime.HasValue)
+            {
+                var age = now - _lastUpdateTime.Value;
+                LastUpdated = GetAgeString(age);
             }
         }
 

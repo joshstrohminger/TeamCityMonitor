@@ -1,7 +1,10 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using BlinkStickUniversal;
 using Interfaces;
 using MVVM;
+using MVVM.Annotations;
 
 namespace DesignData
 {
@@ -27,6 +30,14 @@ namespace DesignData
         public SetupViewModelDesignData()
         {
             ActiveBuild = Builds[0];
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

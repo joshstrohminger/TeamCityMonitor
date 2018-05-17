@@ -59,9 +59,13 @@
             <ItemsControl.ItemTemplate>
                 <DataTemplate x:DataType="interfaces:IBuildMonitor">
                     <StackPanel Margin="10,5">
-                        <TextBlock Text="{x:Bind Status.Name, Mode=OneWay}" FontWeight="Bold"/>
-                        <TextBlock Text="{x:Bind Status.LastChanged}" Visibility="{x:Bind Status.IsStale, Mode=OneWay, Converter={StaticResource VisibleIfTrue}}"/>
-                        <TextBlock Text="{x:Bind Status.LastChanged}" Foreground="{x:Bind Setup.Stale, Converter={StaticResource ToBrush}}" Visibility="{x:Bind Status.IsStale, Mode=OneWay, Converter={StaticResource VisibleIfFalse}}"/>
+                        <TextBlock>
+                            <Run Text="{x:Bind Status.Name, Mode=OneWay}" FontWeight="Bold"/>
+                            <Run Text="   "/>
+                            <Run Text="{x:Bind Status.LastUpdated, Mode=OneWay}"/>
+                        </TextBlock>
+                        <TextBlock Text="{x:Bind Status.LastChanged}" Visibility="{x:Bind Status.IsStale, Mode=OneWay, Converter={StaticResource VisibleIfFalse}}"/>
+                        <TextBlock Text="{x:Bind Status.LastChanged}" Foreground="{x:Bind Setup.Stale, Converter={StaticResource ToBrush}}" Visibility="{x:Bind Status.IsStale, Mode=OneWay, Converter={StaticResource VisibleIfTrue}}"/>
                         <TextBlock Text="{x:Bind Status.ErrorMessage, Mode=OneWay}" Visibility="{x:Bind Status.IsApiError, Mode=OneWay, Converter={StaticResource VisibleIfTrue}}"/>
                         <TextBlock Text="{x:Bind Status.StatusText, Mode=OneWay}" Foreground="{x:Bind Setup.Success, Converter={StaticResource ToBrush}}" Visibility="{x:Bind Status.IsSuccessful, Mode=OneWay, Converter={StaticResource VisibleIfTrue}}"/>
                         <TextBlock Text="{x:Bind Status.StatusText, Mode=OneWay}" Foreground="{x:Bind Setup.Failure, Converter={StaticResource ToBrush}}" Visibility="{x:Bind Status.IsSuccessful, Mode=OneWay, Converter={StaticResource VisibleIfFalse}}"/>
