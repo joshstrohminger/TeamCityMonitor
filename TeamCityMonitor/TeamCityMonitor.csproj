@@ -100,13 +100,12 @@
     <Compile Include="Converters\ByteArrayToColorConverter.cs" />
     <Compile Include="Converters\HideIfNullConverter.cs" />
     <Compile Include="Converters\IsNullConverter.cs" />
-    <Compile Include="Models\Assignee.cs" />
-    <Compile Include="Models\BuildCollection.cs" />
-    <Compile Include="Models\Build.cs" />
-    <Compile Include="Models\BuildTypeStatusSummary.cs" />
-    <Compile Include="Models\Investigation.cs" />
-    <Compile Include="Models\InvestigationCollection.cs" />
-    <Compile Include="ViewModels\TeamCityApi.cs" />
+    <Compile Include="Interfaces\IBuildMonitor.cs" />
+    <Compile Include="Interfaces\IBuildStatus.cs" />
+    <Compile Include="Interfaces\IMonitorViewModel.cs" />
+    <Compile Include="Models\BuildMonitor.cs" />
+    <Compile Include="ViewModels\BuildStatusViewModel.cs" />
+    <Compile Include="ViewModels\MonitorViewModel.cs" />
     <Compile Include="Views\LedIndicator.xaml.cs">
       <DependentUpon>LedIndicator.xaml</DependentUpon>
     </Compile>
@@ -184,6 +183,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Api\Api.csproj">
+      <Project>{6f58cafc-87be-446c-95b6-d8628fb20881}</Project>
+      <Name>Api</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BlinkStickUniversal\BlinkStickUniversal.csproj">
       <Project>{17becb9d-d8b1-4d67-86f5-34536a34d6bb}</Project>
       <Name>BlinkStickUniversal</Name>

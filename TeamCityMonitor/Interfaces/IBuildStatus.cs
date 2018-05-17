@@ -1,8 +1,7 @@
-using System;
 using System.ComponentModel;
-using Windows.UI;
+using Api.Models;
 
-namespace Interfaces
+namespace TeamCityMonitor.Interfaces
 {
     public interface IBuildStatus : INotifyPropertyChanged
     {
@@ -13,11 +12,13 @@ namespace Interfaces
         string LastChanged { get; }
         string RunningUrl { get; }
         bool IsRunning { get; }
-        string Url { get;}
+        string OverallUrl { get;}
+        string LastUrl { get; }
         bool IsQueued { get; }
         string Investigator { get; }
         bool IsUnderInvestigation { get; }
         bool IsStale { get; }
         string ErrorMessage { get; }
+        void Update(BuildTypeStatusSummary summary);
     }
 }

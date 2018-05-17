@@ -17,8 +17,8 @@
     <Page.BottomAppBar>
         <CommandBar>
             <AppBarButton Label="Back" Icon="Back" Command="{x:Bind GoBack}" Visibility="{x:Bind GoBack, Converter={StaticResource HideIfNull}}"/>
-            <AppBarButton Label="Update" Icon= "Refresh"/>
-            <AppBarButton Label="Auto-Update" Icon="Clock"/>
+            <AppBarButton Label="Update" Icon= "Refresh" Command="{x:Bind ViewModel.Refresh}"/>
+            <AppBarToggleButton Label="Auto-Update" Icon="Clock" IsChecked="{x:Bind ViewModel.AutoRefresh, Mode=TwoWay}"/>
         </CommandBar>
     </Page.BottomAppBar>
 
@@ -50,6 +50,13 @@
                 </Grid>
             </Border>
         </StackPanel>
-        <TextBlock x:Name="ResponseTextBlock" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignTopWithPanel="True"/>
+        <ItemsControl RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignTopWithPanel="True" ItemsSource="{x:Bind ViewModel.BuildMonitors}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Status.Name, Mode=OneWay}"/>
+                    <TextBlock Text="{Binding Status.StatusText, Mode=OneWay}"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </RelativePanel>
 </Page>

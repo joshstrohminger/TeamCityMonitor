@@ -9,6 +9,7 @@ using BlinkStickUniversal;
 using Interfaces;
 using Microsoft.Toolkit.Uwp.UI.Extensions;
 using MVVM;
+using TeamCityMonitor.Interfaces;
 using TeamCityMonitor.ViewModels;
 
 namespace TeamCityMonitor.Views
@@ -18,7 +19,7 @@ namespace TeamCityMonitor.Views
     /// </summary>
     public sealed partial class MonitorPage : Page
     {
-        public ISetupViewModel ViewModel { get; private set; }
+        public IMonitorViewModel ViewModel { get; private set; }
 
         public IRelayCommand GoBack { get; }
 
@@ -52,21 +53,9 @@ namespace TeamCityMonitor.Views
             base.OnNavigatedTo(e);
             ApplicationViewExtensions.SetTitle(this, "Monitor");
 
-            ViewModel = (ISetupViewModel)e.Parameter ?? throw new ArgumentNullException(nameof(e.Parameter));
-            ViewModel.Device.SetColorsAsync(1, new byte[]
-            {
-                255,0,0,
-                0,255,0,
-                0,0,255,
-                255,255,0,
-                255,0,255,
-                0,255,255,
-                255,255,255,
-                255,100,5
-            });
+            var setup = (ISetupViewModel)e.Parameter ?? throw new ArgumentNullException(nameof(e.Parameter));
+            ViewModel = new MonitorViewModel(setup);
             DataContext = ViewModel;
-            var response = new TeamCityApi(ViewModel.Host, ViewModel.Builds[0].Id).Refresh();
-            ResponseTextBlock.Text = response.ErrorMessage ?? response.Name;
         }
     }
 }

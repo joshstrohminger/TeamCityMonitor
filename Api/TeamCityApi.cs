@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Api.Models;
 using RestSharp;
-using TeamCityMonitor.Models;
 
-namespace TeamCityMonitor.ViewModels
+namespace Api
 {
-    public class TeamCityApi
+    public class TeamCityApi : ITeamCityApi
     {
         private readonly RestClient _client;
         private readonly RestRequest _request;

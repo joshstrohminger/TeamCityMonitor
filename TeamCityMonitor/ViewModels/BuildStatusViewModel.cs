@@ -1,14 +1,15 @@
 using System;
-using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
+using Windows.UI.Xaml;
+using Api.Models;
 using Interfaces;
 using MVVM;
-using TeamCityMonitor.Models;
-using Windows.UI.Xaml;
+using TeamCityMonitor.Interfaces;
 
-namespace ViewModels
+namespace TeamCityMonitor.ViewModels
 {
-    public class BuildStatusViewModel : ObservableObject, IBuildStatus
+    public class BuildStatusViewModel : ObservableObject, IBuildStatus, IDisposable
     {
         #region Fields
 
@@ -26,7 +27,8 @@ namespace ViewModels
         private string _lastChanged;
         private string _runningUrl;
         private bool _isRunning;
-        private string _url;
+        private string _lastUrl;
+        private string _overallUrl;
         private bool _isQueued;
         private string _investigator;
         private bool _isUnderInvestigation;
@@ -70,10 +72,16 @@ namespace ViewModels
             private set => UpdateOnPropertyChanged(ref _isRunning, value);
         }
 
-        public string Url
+        public string LastUrl
         {
-            get => _url;
-            private set => UpdateOnPropertyChanged(ref _url, value);
+            get => _lastUrl;
+            private set => UpdateOnPropertyChanged(ref _lastUrl, value);
+        }
+
+        public string OverallUrl
+        {
+            get => _overallUrl;
+            private set => UpdateOnPropertyChanged(ref _overallUrl, value);
         }
 
         public bool IsQueued
@@ -114,11 +122,10 @@ namespace ViewModels
         {
             if(setup is null) throw new ArgumentNullException(nameof(setup));
             Name = setup.Name;
-            _timer = new DispatcherTimer();
-            _timer.Interval = TimeSpan.FromSeconds(1);
-            _timer.Tick += (o,e) => RefreshTimeDependentProperties();
+            Id = setup.Id;
+            _timer = new DispatcherTimer {Interval = TimeSpan.FromSeconds(1)};
+            _timer.Tick += (sender, o) => RefreshTimeDependentProperties();
             _timer.Start();
-            // todo need to stop the timer somehow, make this disposable maybe?
         }
             
         #endregion
@@ -139,7 +146,8 @@ namespace ViewModels
                 _timeLastChanged = ParseDateTime(lastFinishedBuild?.FinishDate);
                 IsSuccessful = lastFinishedBuild?.Status == "SUCCESS";
                 StatusText = lastFinishedBuild?.StatusText;
-                Url = lastFinishedBuild?.WebUrl ?? summary.WebUrl;
+                LastUrl = lastFinishedBuild?.WebUrl;
+                OverallUrl = summary.WebUrl;
 
                 IsQueued = summary.Builds.Builds.Any(build => build.State == "queued");
 
@@ -154,7 +162,7 @@ namespace ViewModels
 
         private DateTime? ParseDateTime(string dateTimeString)
         {
-            return DateTime.Now; // todo actually parse this
+            return dateTimeString is null ? (DateTime?)null : DateTime.ParseExact(dateTimeString, "yyyyMMdd'T'HHmmsszzzz", CultureInfo.InvariantCulture);
         }
 
         private void RefreshTimeDependentProperties()
@@ -163,16 +171,36 @@ namespace ViewModels
             {
                 var age = DateTime.Now - _timeLastChanged.Value;
                 IsStale = age > _staleCriteria;
-                LastChanged = age.ToString();
-                // todo use library to come up with a nicer string
+                LastChanged = GetAgeString(age);
             }
             else
             {
                 IsStale = true;
-                LastChanged = "NEVER";
+                LastChanged = "never";
             }
         }
-            
+
+        private string GetAgeString(TimeSpan age)
+        {
+            var seconds = age.TotalSeconds;
+            var minutes = age.TotalMinutes;
+            var hours = age.TotalHours;
+            var days = age.TotalDays;
+
+            if (seconds < 5) return "now";
+            if (seconds < 60) return $"{seconds:0}s ago";
+            if (minutes < 60) return $"{minutes:0}m ago";
+            if (hours < 24) return $"{hours:0}h ago";
+            return $"{days:0} days ago";
+        }
+
+        public void Dispose()
+        {
+            _timer.Stop();
+        }
+
+        public override string ToString() => Id;
+
         #endregion
     }
 }

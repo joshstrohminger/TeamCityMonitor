@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using Api.Models;
 using RestSharp.Deserializers;
 
-namespace TeamCityMonitor.Models
+namespace Api.Models
 {
     public class BuildCollection
     {
