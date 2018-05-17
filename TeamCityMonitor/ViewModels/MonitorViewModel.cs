@@ -65,6 +65,7 @@ namespace TeamCityMonitor.ViewModels
 
             Device = setup.Device;
             Host = setup.Host;
+            Brightness = setup.Brightness;
             BuildMonitors = new ReadOnlyCollection<IBuildMonitor>(setup.Builds.Select(build =>
                     new BuildMonitor(new BuildStatusViewModel(build), new TeamCityApi(setup.Host, build.Id), build))
                 .ToList<IBuildMonitor>());
@@ -72,7 +73,6 @@ namespace TeamCityMonitor.ViewModels
             _timer = new DispatcherTimer {Interval = TimeSpan.FromMinutes(1)};
             _timer.Tick += async (sender, o) => await ExecuteRefreshAsync();
             _timer.Start();
-            //ExecuteRefreshAsync();
         }
 
         private async Task ExecuteRefreshAsync()

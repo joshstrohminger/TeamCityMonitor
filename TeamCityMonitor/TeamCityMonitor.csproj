@@ -98,6 +98,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\ByteArrayToColorConverter.cs" />
+    <Compile Include="Converters\ColorToSolidBrushConverter.cs" />
     <Compile Include="Converters\HideIfNullConverter.cs" />
     <Compile Include="Converters\IsNullConverter.cs" />
     <Compile Include="Interfaces\IBuildMonitor.cs" />

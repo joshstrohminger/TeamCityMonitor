@@ -19,6 +19,7 @@ namespace TeamCityMonitor.Interfaces
         bool IsUnderInvestigation { get; }
         bool IsStale { get; }
         string ErrorMessage { get; }
+        bool IsApiError { get; }
         void Update(BuildTypeStatusSummary summary);
     }
 }

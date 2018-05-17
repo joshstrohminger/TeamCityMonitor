@@ -15,8 +15,6 @@ namespace TeamCityMonitor.ViewModels
 
         private readonly TimeSpan _staleCriteria = TimeSpan.FromHours(5);
         private readonly DispatcherTimer _timer;
-
-        private DateTime? _timeLastChanged;
             
         #endregion
 
@@ -34,6 +32,8 @@ namespace TeamCityMonitor.ViewModels
         private bool _isUnderInvestigation;
         private bool _isStale;
         private string _errorMessage;
+        private DateTime? _timeLastChanged;
+        private bool _isApiError;
 
         #endregion
 
@@ -113,7 +113,13 @@ namespace TeamCityMonitor.ViewModels
             get => _errorMessage;
             private set => UpdateOnPropertyChanged(ref _errorMessage, value);
         }
-        
+
+        public bool IsApiError
+        {
+            get => _isApiError;
+            private set => UpdateOnPropertyChanged(ref _isApiError, value);
+        }
+
         #endregion
     
         #region Construction
@@ -137,6 +143,7 @@ namespace TeamCityMonitor.ViewModels
             if(summary is null) throw new ArgumentNullException(nameof(summary));
 
             ErrorMessage = summary.ErrorMessage;
+            IsApiError = !summary.IsSuccessful;
             if(summary.IsSuccessful)
             {
                 Investigator = summary.Investigations?.Investigations?.FirstOrDefault()?.Assignee?.Name;
