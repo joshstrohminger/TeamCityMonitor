@@ -1,4 +1,6 @@
-﻿using Windows.UI;
+﻿using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -20,59 +22,56 @@ namespace TeamCityMonitor.Views
             set => SetValue(BrushProperty, value);
         }
 
-        public static readonly DependencyProperty RProperty = DependencyProperty.Register(nameof(R), typeof(byte),
-            typeof(LedIndicator), new PropertyMetadata((byte)0, ColorOrBrightnessChanged));
+        public static readonly DependencyProperty ByteSourceProperty = DependencyProperty.Register(nameof(ByteSource), typeof(ObservableCollection<byte>),
+            typeof(LedIndicator), new PropertyMetadata(null, (o, args) => ((LedIndicator)o).ByteSourceChanged(args)));
 
-        public byte R
+        public ObservableCollection<byte> ByteSource
         {
-            get => (byte) GetValue(RProperty);
-            set => SetValue(RProperty, value);
+            get => (ObservableCollection<byte>) GetValue(ByteSourceProperty);
+            set => SetValue(ByteSourceProperty, value);
         }
 
-        public static readonly DependencyProperty GProperty = DependencyProperty.Register(nameof(G), typeof(byte),
-            typeof(LedIndicator), new PropertyMetadata((byte)0, ColorOrBrightnessChanged));
+        public static readonly DependencyProperty IndexProperty = DependencyProperty.Register(nameof(Index), typeof(int),
+            typeof(LedIndicator), new PropertyMetadata(0, (o, args) => ((LedIndicator)o).UpdateColor()));
 
-        public byte G
+        public int Index
         {
-            get => (byte)GetValue(GProperty);
-            set => SetValue(GProperty, value);
+            get => (int)GetValue(IndexProperty);
+            set => SetValue(IndexProperty, value);
         }
 
-        public static readonly DependencyProperty BProperty = DependencyProperty.Register(nameof(B), typeof(byte),
-            typeof(LedIndicator), new PropertyMetadata((byte)0, ColorOrBrightnessChanged));
-
-        public byte B
+        private void ByteSourceChanged(DependencyPropertyChangedEventArgs e)
         {
-            get => (byte)GetValue(BProperty);
-            set => SetValue(BProperty, value);
+            if (e.OldValue is INotifyCollectionChanged oldCollection)
+            {
+                oldCollection.CollectionChanged -= ByteSourceCollectionChanged;
+            }
+
+            if (e.NewValue is INotifyCollectionChanged newCollection)
+            {
+                newCollection.CollectionChanged += ByteSourceCollectionChanged;
+            }
+
+            UpdateColor();
         }
 
-        public static readonly DependencyProperty BrightnessProperty = DependencyProperty.Register(nameof(Brightness),
-            typeof(double), typeof(LedIndicator), new PropertyMetadata(100d, ColorOrBrightnessChanged));
-
-        public double Brightness
+        private void ByteSourceCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            get => (double) GetValue(BrightnessProperty);
-            set => SetValue(BrightnessProperty, value);
-        }
-
-        private static void ColorOrBrightnessChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((LedIndicator)d).UpdateColor();
+            if (e.NewStartingIndex >= Index && e.NewStartingIndex < Index + 3)
+            {
+                UpdateColor();
+            }
+            //UpdateColor();
         }
 
         private void UpdateColor()
         {
-            var hsv = Color.FromArgb(255, R, G, B).ToHsv();
-            hsv.V = Brightness / 100; // apply the brightness
-            if (Brush == null)
-            {
-                Brush = new SolidColorBrush(hsv.ToArgb());
-            }
-            else
-            {
-                Brush.Color = hsv.ToArgb();
-            }
+            var bytes = ByteSource;
+            var i = Index;
+            var color = i + 3 <= bytes?.Count
+                ? Color.FromArgb(255, bytes[i], bytes[i + 1], bytes[i + 2])
+                : Colors.Black;
+            Brush = new SolidColorBrush(color);
         }
 
         public LedIndicator()

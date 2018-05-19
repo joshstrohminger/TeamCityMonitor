@@ -35,15 +35,14 @@
             <AppBarButton Label="Copy To All" Icon="Copy" Command="{Binding ApplyToAllBuilds, Mode=OneTime}"/>
             <AppBarButton Label="Save as Default" Icon="Save" Command="{x:Bind SaveAsDefault, Mode=OneTime}"/>
             <AppBarButton Label="Monitor" Icon="Play" Command="{Binding Monitor, Mode=OneTime}"/>
+            <CommandBar.Content>
+                <Slider VerticalAlignment="Center" VerticalContentAlignment="Center" TickPlacement="None" Margin="10,0" Value="{Binding Brightness, Mode=TwoWay}" Minimum="0" Maximum="100" Width="200"/>
+            </CommandBar.Content>
         </CommandBar>
     </Page.BottomAppBar>
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <TextBox Text="{Binding Host, Mode=TwoWay}" PlaceholderText="Host..."/>
-        <StackPanel Orientation="Horizontal">
-            <Slider VerticalAlignment="Center" TickPlacement="None" Value="{Binding Brightness, Mode=TwoWay}" Minimum="0" Maximum="100" Width="300"/>
-            <TextBlock Text="{Binding Brightness, Mode=OneWay, Converter={StaticResource StringFormat}, ConverterParameter='{}{0:N0}'}" VerticalAlignment="Center" Margin="5"/>
-        </StackPanel>
         <StackPanel Orientation="Horizontal">
             <ListView ItemsSource="{Binding Builds, Mode=OneTime}" SelectedValue="{Binding ActiveBuild, Mode=TwoWay}" CanReorderItems="True" Width="300" MinHeight="100">
                 <ListView.ItemTemplate>
@@ -65,7 +64,7 @@
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
-                            <TextBlock Text="{Binding Name, Mode=OneWay}"/>
+                            <TextBlock Text="{Binding Name, Mode=OneWay}" Margin="5,0"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>

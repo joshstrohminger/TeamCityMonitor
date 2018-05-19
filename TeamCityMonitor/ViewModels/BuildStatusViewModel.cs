@@ -14,7 +14,6 @@ namespace TeamCityMonitor.ViewModels
         #region Fields
 
         private readonly TimeSpan _staleCriteria = TimeSpan.FromHours(5);
-        private DateTime? _lastUpdateTime;
             
         #endregion
 
@@ -34,6 +33,7 @@ namespace TeamCityMonitor.ViewModels
         private string _errorMessage;
         private DateTime? _timeLastChanged;
         private bool _isApiError;
+        private Status _overallStatus;
 
         #endregion
 
@@ -41,6 +41,19 @@ namespace TeamCityMonitor.ViewModels
 
         public string Name {get;}
         public string Id {get;}
+
+        public Status OverallStatus
+        {
+            get => _overallStatus;
+            private set
+            {
+                if (_overallStatus != value)
+                {
+                    _overallStatus = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         public bool IsSuccessful
         {
@@ -141,7 +154,6 @@ namespace TeamCityMonitor.ViewModels
 
             ErrorMessage = summary.ErrorMessage;
             IsApiError = !summary.IsSuccessful;
-            _lastUpdateTime = DateTime.Now;
             if(summary.IsSuccessful)
             {
                 Investigator = summary.Investigations?.Investigations?.FirstOrDefault()?.Assignee?.Name;
@@ -158,9 +170,9 @@ namespace TeamCityMonitor.ViewModels
 
                 RunningUrl = summary.Builds.Builds.FirstOrDefault(build => build.State == "running")?.WebUrl;
                 IsRunning = !string.IsNullOrWhiteSpace(RunningUrl);
-            }
 
-            // todo Decide on how to set the LEDs and whether any flashing is needed for state changes, or handle it ouside of this class
+                OverallStatus = IsStale ? Status.Stale : IsSuccessful ? Status.Success : Status.Failure;
+            }
 
             RefreshTimeDependentProperties();
         }
@@ -177,6 +189,10 @@ namespace TeamCityMonitor.ViewModels
             {
                  var age = now - _timeLastChanged.Value;
                 IsStale = age > _staleCriteria;
+                if (IsStale)
+                {
+                    OverallStatus = Status.Stale;
+                }
                 LastChanged = age.ToAgeString();
             }
         }

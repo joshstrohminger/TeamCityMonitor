@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Windows.UI;
 using BlinkStickUniversal;
@@ -11,10 +12,10 @@ namespace DesignData
     public class BlinkStickSimulator : ObservableObject, IBlinkStick
     {
         private bool _connected;
-        private const int Leds = 8;
+        private int _leds = 8;
         public event BlinkStick.ErrorHandler OnError;
 
-        public ObservableCollection<byte> CurrentColors { get; } = new ObservableCollection<byte>(Enumerable.Repeat((byte)0, Leds * 3));
+        public ObservableCollection<byte> CurrentColors { get; } = new ObservableCollection<byte>(Enumerable.Repeat((byte)0, 8 * 3));
         public bool Connected
         {
             get => _connected;
@@ -39,6 +40,21 @@ namespace DesignData
         public async Task SetColorAsync(string color)
         {
             await SetColorAsync(ColorExtensions.FromString(color));
+        }
+
+        public async Task SetLedCountAsync(byte count)
+        {
+            if (Connected)
+            {
+                _leds = count;
+                await Task.Delay(0);
+            }
+        }
+
+        public async Task<int> GetLedCountAsync()
+        {
+            if (!Connected) return -1;
+            return await Task.FromResult(_leds);
         }
 
         public async Task SetColorAsync(Color color)
@@ -94,6 +110,22 @@ namespace DesignData
                 CurrentColors[i] = colorData[i];
             }
             await Task.Delay(1);
+        }
+
+        public async Task SetColorsAsync(params Color[] colors)
+        {
+            await SetColorsAsync(0, colors.SelectMany(c => new[] {c.R, c.G, c.B}).ToArray());
+        }
+
+        public async Task BlinkAsync(Color[] colors, int repeats = 1, int delay = 500)
+        {
+            for (var i = 0; i < repeats; i++)
+            {
+                await SetColorsAsync(colors);
+                await Task.Delay(delay);
+                await SetColorAsync(0,0,0);
+                await Task.Delay(delay);
+            }
         }
 
         public async Task<byte[]> GetColorsAsync()

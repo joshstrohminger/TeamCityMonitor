@@ -15,15 +15,18 @@ namespace DesignData
         public Color Stale => Colors[5].Color;
         public Color Idle => Colors[6].Color;
         public Color Success => Colors[0].Color;
+        public int[] AllLedIndexes { get; set; }
+        public int FirstRunningQueuedLedIndex { get; set; }
+        public int SecondRunningQueuedledIndex { get; set; }
 
         public ILabeledColor[] Colors { get; } = {
-            new LabeledColorDesignData("Success", "green"),
-            new LabeledColorDesignData("Failure", "red"),
-            new LabeledColorDesignData("Queued", "yellow"),
-            new LabeledColorDesignData("Running", "blue"),
-            new LabeledColorDesignData("Investigating", "orange"),
-            new LabeledColorDesignData("Stale", "purple"),
-            new LabeledColorDesignData("Idle", "black")
+            new LabeledColorDesignData("Success", "#00FF00"),
+            new LabeledColorDesignData("Failure", "#FF0000"),
+            new LabeledColorDesignData("Queued", "#FFFF00"),
+            new LabeledColorDesignData("Running", "#00FFFF"),
+            new LabeledColorDesignData("Investigating", "#FFA500"),
+            new LabeledColorDesignData("Stale", "#FF00FF"),
+            new LabeledColorDesignData("Idle", "#000000")
         };
 
         public string Id { get; set; } = "buildidgoeshere";

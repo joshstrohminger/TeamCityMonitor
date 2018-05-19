@@ -59,6 +59,10 @@ namespace BlinkStickUniversal
         /// <param name="color">Color as RgbColor class.</param>
         Task SetColorAsync(Color color);
 
+        Task SetLedCountAsync(byte count);
+
+        Task<int> GetLedCountAsync();
+
         /// <summary>
         /// Sets the color of the led.
         /// </summary>
@@ -110,6 +114,8 @@ namespace BlinkStickUniversal
         /// <param name="channel">Channel (0 - R, 1 - G, 2 - B)</param>
         /// <param name="colorData">Report data must be a byte array in the following format: [g0, r0, b0, g1, r1, b1, g2, r2, b2 ...]</param>
         Task SetColorsAsync(byte channel, byte[] colorData);
+
+        Task SetColorsAsync(params Color[] colors);
 
         /// <summary>
         /// Gets led data.
@@ -175,6 +181,8 @@ namespace BlinkStickUniversal
         /// <param name="repeats">How many times to repeat (default 1)</param>
         /// <param name="delay">Delay delay between on/off sequences (default 500)</param>
         Task BlinkAsync(Color color, int repeats = 1, int delay = 500);
+
+        Task BlinkAsync(Color[] colors, int repeats = 1, int delay = 500);
 
         /// <summary>
         /// Blink the LED.

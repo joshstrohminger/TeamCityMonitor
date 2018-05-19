@@ -1,5 +1,8 @@
 ﻿using System;
 using Windows.System.Profile;
+using Windows.UI;
+using BlinkStickUniversal;
+using Microsoft.Toolkit.Uwp.Helpers;
 
 namespace TeamCityMonitor.Views
 {

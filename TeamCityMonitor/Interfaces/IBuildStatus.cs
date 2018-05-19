@@ -3,6 +3,13 @@ using Api.Models;
 
 namespace TeamCityMonitor.Interfaces
 {
+    public enum Status
+    {
+        Success,
+        Failure,
+        Stale
+    }
+
     public interface IBuildStatus : INotifyPropertyChanged
     {
         string Name { get; }
@@ -22,5 +29,6 @@ namespace TeamCityMonitor.Interfaces
         bool IsApiError { get; }
         void Update(BuildTypeStatusSummary summary);
         void RefreshTimeDependentProperties();
+        Status OverallStatus { get; }
     }
 }

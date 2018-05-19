@@ -11,13 +11,13 @@ namespace TeamCityMonitor.ViewModels
 
         public ILabeledColor[] Colors { get; } =
         {
-            new LabeledColor("Success", "green"),
-            new LabeledColor("Failure", "red"),
-            new LabeledColor("Queued", "yellow"),
-            new LabeledColor("Running", "blue"),
-            new LabeledColor("Investigating", "orange"),
-            new LabeledColor("Stale", "purple"),
-            new LabeledColor("Idle", "black")
+            new LabeledColor("Success", "#00FF00"),
+            new LabeledColor("Failure", "#FF0000"),
+            new LabeledColor("Queued", "#FFFF00"),
+            new LabeledColor("Running", "#00FFFF"),
+            new LabeledColor("Investigating", "#FFA500"),
+            new LabeledColor("Stale", "#FF00FF"),
+            new LabeledColor("Idle", "#000000")
         };
 
         public Color Success => Colors[0].Color;
@@ -27,6 +27,9 @@ namespace TeamCityMonitor.ViewModels
         public Color Investigating => Colors[4].Color;
         public Color Stale => Colors[5].Color;
         public Color Idle => Colors[6].Color;
+        public int[] AllLedIndexes { get; set; }
+        public int FirstRunningQueuedLedIndex { get; set; }
+        public int SecondRunningQueuedledIndex { get; set; }
 
         public string Id
         {

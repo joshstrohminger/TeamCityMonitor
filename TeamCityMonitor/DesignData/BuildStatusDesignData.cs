@@ -11,6 +11,7 @@ namespace TeamCityMonitor.DesignData
         public event PropertyChangedEventHandler PropertyChanged;
         public string Name { get; set; }
         public string Id { get; set; }
+        public Status OverallStatus { get; set; }
         public bool IsSuccessful { get; set; }
         public string StatusText { get; set; }
         public string LastChanged { get; set; }

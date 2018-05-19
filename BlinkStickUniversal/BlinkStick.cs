@@ -442,6 +442,11 @@ namespace BlinkStickUniversal
             await SetColorAsync(channel, index, color.R, color.G, color.B);
         }
 
+        public async Task SetColorsAsync(params Color[] colors)
+        {
+            await SetColorsAsync(0, colors.SelectMany(c => new[] { c.R, c.G, c.B }).ToArray());
+        }
+
         /// <summary>
         /// Send a packet of data to LEDs
         /// </summary>
@@ -590,7 +595,7 @@ namespace BlinkStickUniversal
         #endregion
 
         #region BlinkStick Flex features
-        public async Task SetLedCount(byte count)
+        public async Task SetLedCountAsync(byte count)
         {
             if (Connected)
             {
@@ -598,7 +603,7 @@ namespace BlinkStickUniversal
             }
         }
 
-        public async Task<int> GetLedCount()
+        public async Task<int> GetLedCountAsync()
         {
             if (!Connected) return -1;
             var data = await GetFeatureAsync(0x81);
@@ -699,6 +704,17 @@ namespace BlinkStickUniversal
         public async Task BlinkAsync(string color, int repeats = 1, int delay = 500)
         {
             await BlinkAsync(0, 0, color, repeats, delay);
+        }
+
+        public async Task BlinkAsync(Color[] colors, int repeats = 1, int delay = 500)
+        {
+            for (var i = 0; i < repeats; i++)
+            {
+                await SetColorsAsync(colors);
+                await Task.Delay(delay);
+                await SetColorAsync(0, 0, 0);
+                await Task.Delay(delay);
+            }
         }
         #endregion
 
