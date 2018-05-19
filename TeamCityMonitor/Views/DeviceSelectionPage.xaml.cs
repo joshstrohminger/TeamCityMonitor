@@ -54,10 +54,10 @@ namespace TeamCityMonitor.Views
                 device.CloseDevice();
             }
             Devices.Clear();
-#if ARM
-            var devices = await BlinkStick.FindAllAsync();
-#else
-            var devices = new[] {new BlinkStickSimulator()};
+
+            var devices = (await BlinkStick.FindAllAsync()).ToList<IBlinkStick>();
+#if !ARM
+            devices.Add(new BlinkStickSimulator());
 #endif
             foreach (var device in devices)
             {

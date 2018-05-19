@@ -128,6 +128,17 @@ namespace DesignData
             }
         }
 
+        public async Task BlinkAsync(Color[] onColors, Color[] offColors, int repeats = 1, int delay = 500)
+        {
+            for (var i = 0; i < repeats; i++)
+            {
+                await SetColorsAsync(onColors);
+                await Task.Delay(delay);
+                await SetColorsAsync(offColors);
+                await Task.Delay(delay);
+            }
+        }
+
         public async Task<byte[]> GetColorsAsync()
         {
             return await Task.FromResult(CurrentColors.ToArray());

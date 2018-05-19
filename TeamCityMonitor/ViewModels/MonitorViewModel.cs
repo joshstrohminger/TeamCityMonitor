@@ -90,8 +90,11 @@ namespace TeamCityMonitor.ViewModels
             Device = setup.Device;
             Host = setup.Host;
             Brightness = setup.Brightness;
-            BuildMonitors = new ReadOnlyCollection<IBuildMonitor>(setup.Builds.Select(build =>
-                    new BuildMonitor(new BuildStatusViewModel(build), new TeamCityApi(setup.Host, build.Id), build))
+            BuildMonitors = new ReadOnlyCollection<IBuildMonitor>(setup.Builds.Select((build,i) =>
+                    new BuildMonitor(new BuildStatusViewModel(build),
+                        //new TeamCityApi(setup.Host, build.Id),
+                        new TeamCityApiSimulator(setup.Host, build.Id, i),
+                        build))
                 .ToList<IBuildMonitor>());
 
             // todo make this dynamic instead of a special case
@@ -139,8 +142,8 @@ namespace TeamCityMonitor.ViewModels
                 _leds = await Device.GetLedCountAsync();
             }
             
-            var colors = new Color[_leds];
-            var blinkColors = new Color[_leds];
+            var onColors = new Color[_leds];
+            var offColors = new Color[_leds];
             var blink = false;
 
             foreach (var buildMonitor in BuildMonitors)
@@ -151,15 +154,17 @@ namespace TeamCityMonitor.ViewModels
                 buildMonitor.Status.Update(summary);
 
                 var newStatus = buildMonitor.Status.OverallStatus;
-                var overallStatusColor = newStatus == Status.Stale ? buildMonitor.Setup.Stale
+                var overallStatusColor = buildMonitor.Status.IsUnderInvestigation ? buildMonitor.Setup.Investigating
+                    : newStatus == Status.Stale ? buildMonitor.Setup.Stale
                     : newStatus == Status.Success ? buildMonitor.Setup.Success
                     : buildMonitor.Setup.Failure;
                 foreach (var i in buildMonitor.Setup.AllLedIndexes)
                 {
-                    colors[i] = overallStatusColor;
+                    onColors[i] = overallStatusColor;
+                    offColors[i] = overallStatusColor;
                     if (previousStatus != newStatus)
                     {
-                        blinkColors[i] = overallStatusColor;
+                        offColors[i] = Colors.Black;
                         blink = true;
                     }
                 }
@@ -167,22 +172,24 @@ namespace TeamCityMonitor.ViewModels
                 var nextIndex = buildMonitor.Setup.FirstRunningQueuedLedIndex;
                 if (buildMonitor.Status.IsQueued)
                 {
-                    colors[nextIndex] = buildMonitor.Setup.Queued;
+                    onColors[nextIndex] = buildMonitor.Setup.Queued;
+                    offColors[nextIndex] = blink ? Colors.Black : buildMonitor.Setup.Queued;
                     nextIndex = buildMonitor.Setup.SecondRunningQueuedledIndex;
                 }
                 if (buildMonitor.Status.IsRunning)
                 {
-                    colors[nextIndex] = buildMonitor.Setup.Running;
+                    onColors[nextIndex] = buildMonitor.Setup.Running;
+                    offColors[nextIndex] = blink ? Colors.Black : buildMonitor.Setup.Running;
                 }
             }
 
+            Scale(ref onColors);
             if (blink)
             {
-                Scale(ref blinkColors);
-                await Device.BlinkAsync(blinkColors, 5, 200);
+                Scale(ref offColors);
+                await Device.BlinkAsync(onColors, offColors, 5, 200);
             }
-            Scale(ref colors);
-            await Device.SetColorsAsync(colors);
+            await Device.SetColorsAsync(onColors);
 
             _lastUpdatedTime = DateTime.Now;
         }
@@ -191,6 +198,7 @@ namespace TeamCityMonitor.ViewModels
         {
             for (var i = 0; i < colors.Length; i++)
             {
+                if(colors[i] == Colors.Black) continue;
                 var hsv = colors[i].ToHsv();
                 hsv.V = Brightness / 100; // apply the brightness
                 colors[i] = hsv.ToArgb();

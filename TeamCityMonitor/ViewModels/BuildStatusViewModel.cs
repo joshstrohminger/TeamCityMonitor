@@ -171,7 +171,7 @@ namespace TeamCityMonitor.ViewModels
                 RunningUrl = summary.Builds.Builds.FirstOrDefault(build => build.State == "running")?.WebUrl;
                 IsRunning = !string.IsNullOrWhiteSpace(RunningUrl);
 
-                OverallStatus = IsStale ? Status.Stale : IsSuccessful ? Status.Success : Status.Failure;
+                OverallStatus = IsSuccessful ? Status.Success : Status.Failure;
             }
 
             RefreshTimeDependentProperties();

@@ -184,6 +184,8 @@ namespace BlinkStickUniversal
 
         Task BlinkAsync(Color[] colors, int repeats = 1, int delay = 500);
 
+        Task BlinkAsync(Color[] onColors, Color[] offColors, int repeats = 1, int delay = 500);
+
         /// <summary>
         /// Blink the LED.
         /// </summary>
