@@ -1,20 +1,19 @@
 using System;
 using System.Globalization;
 using System.Linq;
-using Windows.UI.Xaml;
 using Api.Models;
 using Interfaces;
 using MVVM;
 using TeamCityMonitor.Interfaces;
+using TeamCityMonitor.Views;
 
 namespace TeamCityMonitor.ViewModels
 {
-    public class BuildStatusViewModel : ObservableObject, IBuildStatus, IDisposable
+    public class BuildStatusViewModel : ObservableObject, IBuildStatus
     {
         #region Fields
 
         private readonly TimeSpan _staleCriteria = TimeSpan.FromHours(5);
-        private readonly DispatcherTimer _timer;
         private DateTime? _lastUpdateTime;
             
         #endregion
@@ -23,7 +22,7 @@ namespace TeamCityMonitor.ViewModels
         
         private bool _isSuccessful;
         private string _statusText;
-        private string _lastChanged;
+        private string _lastChanged = "never";
         private string _runningUrl;
         private bool _isRunning;
         private string _lastUrl;
@@ -31,11 +30,10 @@ namespace TeamCityMonitor.ViewModels
         private bool _isQueued;
         private string _investigator;
         private bool _isUnderInvestigation;
-        private bool _isStale;
+        private bool _isStale = true;
         private string _errorMessage;
         private DateTime? _timeLastChanged;
         private bool _isApiError;
-        private string _lastUpdated = "never";
 
         #endregion
 
@@ -122,12 +120,6 @@ namespace TeamCityMonitor.ViewModels
             private set => UpdateOnPropertyChanged(ref _isApiError, value);
         }
 
-        public string LastUpdated
-        {
-            get => _lastUpdated;
-            private set => UpdateOnPropertyChanged(ref _lastUpdated, value);
-        }
-
         #endregion
     
         #region Construction
@@ -137,9 +129,6 @@ namespace TeamCityMonitor.ViewModels
             if(setup is null) throw new ArgumentNullException(nameof(setup));
             Name = setup.Name;
             Id = setup.Id;
-            _timer = new DispatcherTimer {Interval = TimeSpan.FromSeconds(1)};
-            _timer.Tick += (sender, o) => RefreshTimeDependentProperties();
-            _timer.Start();
         }
             
         #endregion
@@ -181,45 +170,15 @@ namespace TeamCityMonitor.ViewModels
             return dateTimeString is null ? (DateTime?)null : DateTime.ParseExact(dateTimeString, "yyyyMMdd'T'HHmmsszzzz", CultureInfo.InvariantCulture);
         }
 
-        private void RefreshTimeDependentProperties()
+        public void RefreshTimeDependentProperties()
         {
             var now = DateTime.Now;
             if(_timeLastChanged.HasValue)
             {
                  var age = now - _timeLastChanged.Value;
                 IsStale = age > _staleCriteria;
-                LastChanged = GetAgeString(age);
+                LastChanged = age.ToAgeString();
             }
-            else
-            {
-                IsStale = true;
-                LastChanged = "never";
-            }
-
-            if (_lastUpdateTime.HasValue)
-            {
-                var age = now - _lastUpdateTime.Value;
-                LastUpdated = GetAgeString(age);
-            }
-        }
-
-        private string GetAgeString(TimeSpan age)
-        {
-            var seconds = age.TotalSeconds;
-            var minutes = age.TotalMinutes;
-            var hours = age.TotalHours;
-            var days = age.TotalDays;
-
-            if (seconds < 5) return "now";
-            if (seconds < 60) return $"{seconds:0}s ago";
-            if (minutes < 60) return $"{minutes:0}m ago";
-            if (hours < 24) return $"{hours:0}h ago";
-            return $"{days:0} days ago";
-        }
-
-        public void Dispose()
-        {
-            _timer.Stop();
         }
 
         public override string ToString() => Id;

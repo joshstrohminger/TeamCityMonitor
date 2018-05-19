@@ -1,4 +1,5 @@
 ﻿using System;
+using Windows.ApplicationModel;
 using Windows.System.Profile;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
@@ -9,6 +10,7 @@ using BlinkStickUniversal;
 using Interfaces;
 using Microsoft.Toolkit.Uwp.UI.Extensions;
 using MVVM;
+using TeamCityMonitor.DesignData;
 using TeamCityMonitor.Interfaces;
 using TeamCityMonitor.ViewModels;
 
@@ -30,6 +32,12 @@ namespace TeamCityMonitor.Views
             if (ViewHelper.IsIot)
             {
                 GoBack = new RelayCommand(NavigateBack);
+            }
+
+            if (DesignMode.DesignMode2Enabled)
+            {
+                ViewModel = new MonitorViewModelDesignData();
+                DataContext = ViewModel;
             }
         }
 

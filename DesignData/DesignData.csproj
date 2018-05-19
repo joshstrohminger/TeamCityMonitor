@@ -112,6 +112,7 @@
     <Compile Include="LabeledColorDesignData.cs" />
     <Compile Include="SetupViewModelDesignData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TeamCityApiDesignData.cs" />
     <EmbeddedResource Include="Properties\DesignData.rd.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -120,6 +121,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Api\Api.csproj">
+      <Project>{6f58cafc-87be-446c-95b6-d8628fb20881}</Project>
+      <Name>Api</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BlinkStickUniversal\BlinkStickUniversal.csproj">
       <Project>{17BECB9D-D8B1-4D67-86F5-34536A34D6BB}</Project>
       <Name>BlinkStickUniversal</Name>

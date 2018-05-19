@@ -10,7 +10,6 @@ namespace TeamCityMonitor.Interfaces
         bool IsSuccessful { get; }
         string StatusText { get; }
         string LastChanged { get; }
-        string LastUpdated { get; }
         string RunningUrl { get; }
         bool IsRunning { get; }
         string OverallUrl { get;}
@@ -22,5 +21,6 @@ namespace TeamCityMonitor.Interfaces
         string ErrorMessage { get; }
         bool IsApiError { get; }
         void Update(BuildTypeStatusSummary summary);
+        void RefreshTimeDependentProperties();
     }
 }

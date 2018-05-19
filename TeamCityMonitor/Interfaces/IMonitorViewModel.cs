@@ -14,5 +14,6 @@ namespace TeamCityMonitor.Interfaces
         IRelayCommand Refresh { get; }
         bool AutoRefresh { get; set; }
         double Brightness { get; set; }
+        string LastUpdated { get; }
     }
 }
