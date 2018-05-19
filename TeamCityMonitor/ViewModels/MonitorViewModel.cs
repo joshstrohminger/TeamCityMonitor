@@ -109,17 +109,17 @@ namespace TeamCityMonitor.ViewModels
                 setup.Builds[1].SecondRunningQueuedledIndex = 5;
             }
 
-            Refresh = new RelayCommand(async () => await ExecuteRefreshAsync());
+            Refresh = new RelayCommand(async () => await ExecuteRefreshAsync(true));
 
             _autoRefreshTimer = new DispatcherTimer {Interval = TimeSpan.FromMinutes(1)};
-            _autoRefreshTimer.Tick += async (sender, o) => await ExecuteRefreshAsync();
+            _autoRefreshTimer.Tick += async (sender, o) => await ExecuteRefreshAsync(false);
             _autoRefreshTimer.Start();
 
             _refreshAgeTimer = new DispatcherTimer {Interval = TimeSpan.FromSeconds(1)};
             _refreshAgeTimer.Tick += RefreshAgeTimerOnTick;
             _refreshAgeTimer.Start();
 
-            ExecuteRefreshAsync();
+            ExecuteRefreshAsync(false);
         }
 
         private void RefreshAgeTimerOnTick(object sender, object e)
@@ -135,8 +135,15 @@ namespace TeamCityMonitor.ViewModels
             }
         }
 
-        private async Task ExecuteRefreshAsync()
+        private async Task ExecuteRefreshAsync(bool manualRefresh)
         {
+            if (manualRefresh && AutoRefresh)
+            {
+                // restart the timer since we just manually refreshed
+                _autoRefreshTimer.Stop();
+                _autoRefreshTimer.Start();
+            }
+
             if (_leds <= 0)
             {
                 _leds = await Device.GetLedCountAsync();
