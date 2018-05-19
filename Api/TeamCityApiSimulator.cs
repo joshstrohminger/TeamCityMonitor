@@ -40,7 +40,7 @@ namespace Api
                     Builds = new BuildCollection{Builds = new List<Build>
                     {
                         new Build{StatusText = "Three - Running", Status = "SUCCESS", State = "finished", FinishDate = DateTime.Now.ToString("yyyyMMdd'T'HHmmsszzzz") },
-                        new Build{StatusText = "Three - Running", Status = "SUCCESS", State = "running", WebUrl = "a"},
+                        new Build{StatusText = "Three - Running", Status = "SUCCESS", State = "running", WebUrl = "a"}
                     }}
                 },
                 new BuildTypeStatusSummary
@@ -49,7 +49,7 @@ namespace Api
                     {
                         new Build{StatusText = "Four - Both", Status = "SUCCESS", State = "finished", FinishDate = DateTime.Now.ToString("yyyyMMdd'T'HHmmsszzzz") },
                         new Build{StatusText = "Four - Both", Status = "SUCCESS", State = "running", WebUrl = "a"},
-                        new Build{StatusText = "Four - Both", Status = "SUCCESS", State = "queued"},
+                        new Build{StatusText = "Four - Both", Status = "SUCCESS", State = "queued"}
                     }}
                 },
                 new BuildTypeStatusSummary
@@ -62,7 +62,16 @@ namespace Api
                 },
                 new BuildTypeStatusSummary
                 {
-                    Builds = new BuildCollection{Builds = new List<Build>{new Build{StatusText = "Seven - Investigating", Status = "FAILED", State = "finished", FinishDate = DateTime.Now.AddHours(-1).ToString("yyyyMMdd'T'HHmmsszzzz") }}},
+                    Builds = new BuildCollection{Builds = new List<Build>
+                    {
+                        new Build{StatusText = "Seven - Success - Both", Status = "SUCCESS", State = "finished", FinishDate = DateTime.Now.AddHours(-1).ToString("yyyyMMdd'T'HHmmsszzzz") },
+                        new Build{StatusText = "Four - Both", Status = "SUCCESS", State = "running", WebUrl = "a"},
+                        new Build{StatusText = "Four - Both", Status = "SUCCESS", State = "queued"}
+                    }}
+                },
+                new BuildTypeStatusSummary
+                {
+                    Builds = new BuildCollection{Builds = new List<Build>{new Build{StatusText = "Eight - Investigating", Status = "FAILED", State = "finished", FinishDate = DateTime.Now.AddHours(-1).ToString("yyyyMMdd'T'HHmmsszzzz") }}},
                     Investigations = new InvestigationCollection{Count = 1, Investigations = new List<Investigation>{new Investigation{Assignee = new Assignee{Name = "Someone's name"}}}}
                 },
                 new BuildTypeStatusSummary

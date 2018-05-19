@@ -173,13 +173,13 @@ namespace TeamCityMonitor.ViewModels
                 if (buildMonitor.Status.IsQueued)
                 {
                     onColors[nextIndex] = buildMonitor.Setup.Queued;
-                    offColors[nextIndex] = blink ? Colors.Black : buildMonitor.Setup.Queued;
+                    offColors[nextIndex] = previousStatus != newStatus ? Colors.Black : buildMonitor.Setup.Queued;
                     nextIndex = buildMonitor.Setup.SecondRunningQueuedledIndex;
                 }
                 if (buildMonitor.Status.IsRunning)
                 {
                     onColors[nextIndex] = buildMonitor.Setup.Running;
-                    offColors[nextIndex] = blink ? Colors.Black : buildMonitor.Setup.Running;
+                    offColors[nextIndex] = previousStatus != newStatus ? Colors.Black : buildMonitor.Setup.Running;
                 }
             }
 
