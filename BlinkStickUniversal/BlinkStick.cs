@@ -24,6 +24,7 @@ namespace BlinkStickUniversal
         private HidDevice _device;
         private bool _connected;
         private bool _stopped;
+        private int _lastColorDataSize = 3;
 
         #endregion
 
@@ -343,21 +344,7 @@ namespace BlinkStickUniversal
         {
             if (Connected)
             {
-                if (CurrentColors.Count == 3)
-                {
-                    CurrentColors[0] = r;
-                    CurrentColors[1] = g;
-                    CurrentColors[2] = b;
-                }
-                else
-                {
-                    var bytes = new [] {r, g, b};
-                    for (var i = 0; i < CurrentColors.Count; i++)
-                    {
-                        CurrentColors[i] = bytes[i % 3];
-                    }
-                }
-                await SetFeatureAsync(new byte[] { 1, r, g, b });
+                await SetColorsAsync(0, Enumerable.Repeat(new[] {r, g, b}, _lastColorDataSize / 3).SelectMany(x => x).ToArray());
             }
         }
 
@@ -369,7 +356,8 @@ namespace BlinkStickUniversal
         {
             if (!Connected) throw new Exception("Not connected");
             var report = await GetFeatureAsync(0x01);
-            return (report[1], report[2], report[3]);
+            // R and G are swapped
+            return (report[2], report[1], report[3]);
         }
 
         /// <summary>
@@ -377,7 +365,7 @@ namespace BlinkStickUniversal
         /// </summary>
         public async Task TurnOffAsync()
         {
-            await SetColorAsync(0, 0, 0);
+            await SetColorsAsync(0, Enumerable.Repeat((byte)0, _lastColorDataSize).ToArray());
         }
         #endregion
 
@@ -416,7 +404,7 @@ namespace BlinkStickUniversal
                 CurrentColors[index * 3] = r;
                 CurrentColors[index * 3 + 1] = g;
                 CurrentColors[index * 3 + 2] = b;
-                await SetFeatureAsync(new byte[] { 5, channel, index, r, g, b });
+                await SetFeatureAsync(new byte[] { 5, channel, index, g, r, b });
             }
         }
 
@@ -472,6 +460,8 @@ namespace BlinkStickUniversal
                 }
             }
 
+            _lastColorDataSize = colorData.Length;
+
             //Automatically determine the correct report id to send the data to
             if (colorData.Length <= 8 * 3)
             {
@@ -497,6 +487,14 @@ namespace BlinkStickUniversal
             {
                 maxLeds = 64;
                 reportId = 10;
+            }
+
+            // swap all G and R values since they're swapped in the device
+            for (var i = 0; i < colorData.Length; i+=3)
+            {
+                var temp = colorData[i];
+                colorData[i] = colorData[i + 1];
+                colorData[i + 1] = temp;
             }
 
             var data = new byte[maxLeds * 3 + 2];
@@ -544,6 +542,14 @@ namespace BlinkStickUniversal
 
             var colorData = new byte[3 * 8 * 8];
             Array.Copy(data, 2, colorData, 0, colorData.Length);
+
+            // swap all G and R values since they're swapped in the device
+            for (var i = 0; i < colorData.Length; i += 3)
+            {
+                var temp = colorData[i];
+                colorData[i] = colorData[i + 1];
+                colorData[i + 1] = temp;
+            }
 
             return colorData;
         }

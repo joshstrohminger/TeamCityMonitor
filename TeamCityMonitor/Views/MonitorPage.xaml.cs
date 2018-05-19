@@ -50,9 +50,10 @@ namespace TeamCityMonitor.Views
             }
         }
 
-        private void NavigateBack()
+        private async void NavigateBack()
         {
             ViewModel.Dispose();
+            await ViewModel.Device.TurnOffAsync();
             Frame.GoBack();
         }
 

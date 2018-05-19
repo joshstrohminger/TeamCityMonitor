@@ -23,7 +23,7 @@
         <CommandBar>
             <AppBarButton Label="Back" Icon="Back" Command="{x:Bind GoBack}" Visibility="{x:Bind GoBack, Converter={StaticResource HideIfNull}}"/>
             <AppBarButton Label="Update" Icon= "Refresh" Command="{x:Bind ViewModel.Refresh}"/>
-            <AppBarToggleButton Label="{x:Bind ViewModel.Brightness, Mode=OneWay}" Icon="Clock" IsChecked="{x:Bind ViewModel.AutoRefresh, Mode=TwoWay}"/>
+            <AppBarToggleButton Label="Auto-Refresh" Icon="Clock" IsChecked="{x:Bind ViewModel.AutoRefresh, Mode=TwoWay}"/>
             <CommandBar.Content>
                 <StackPanel Orientation="Horizontal">
                     <StackPanel.Resources>
@@ -58,14 +58,14 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <local:LedIndicator Grid.Row="3" Grid.Column="1" Index="0" ByteSource="{x:Bind ViewModel.Device.CurrentColors, Mode=OneWay}"/>
-                    <local:LedIndicator Grid.Row="2" Grid.Column="0" Index="3" ByteSource="{x:Bind ViewModel.Device.CurrentColors, Mode=OneWay}"/>
-                    <local:LedIndicator Grid.Row="1" Grid.Column="0" Index="6" ByteSource="{x:Bind ViewModel.Device.CurrentColors, Mode=OneWay}"/>
-                    <local:LedIndicator Grid.Row="0" Grid.Column="1" Index="9" ByteSource="{x:Bind ViewModel.Device.CurrentColors, Mode=OneWay}"/>
-                    <local:LedIndicator Grid.Row="0" Grid.Column="2" Index="12" ByteSource="{x:Bind ViewModel.Device.CurrentColors, Mode=OneWay}"/>
-                    <local:LedIndicator Grid.Row="1" Grid.Column="3" Index="15" ByteSource="{x:Bind ViewModel.Device.CurrentColors, Mode=OneWay}"/>
-                    <local:LedIndicator Grid.Row="2" Grid.Column="3" Index="18" ByteSource="{x:Bind ViewModel.Device.CurrentColors, Mode=OneWay}"/>
-                    <local:LedIndicator Grid.Row="3" Grid.Column="2" Index="21" ByteSource="{x:Bind ViewModel.Device.CurrentColors, Mode=OneWay}"/>
+                    <local:LedIndicator Grid.Row="2" Grid.Column="0" Index="0" ByteSource="{x:Bind ViewModel.Device.CurrentColors, Mode=OneWay}"/>
+                    <local:LedIndicator Grid.Row="1" Grid.Column="0" Index="3" ByteSource="{x:Bind ViewModel.Device.CurrentColors, Mode=OneWay}"/>
+                    <local:LedIndicator Grid.Row="0" Grid.Column="1" Index="6" ByteSource="{x:Bind ViewModel.Device.CurrentColors, Mode=OneWay}"/>
+                    <local:LedIndicator Grid.Row="0" Grid.Column="2" Index="9" ByteSource="{x:Bind ViewModel.Device.CurrentColors, Mode=OneWay}"/>
+                    <local:LedIndicator Grid.Row="1" Grid.Column="3" Index="12" ByteSource="{x:Bind ViewModel.Device.CurrentColors, Mode=OneWay}"/>
+                    <local:LedIndicator Grid.Row="2" Grid.Column="3" Index="15" ByteSource="{x:Bind ViewModel.Device.CurrentColors, Mode=OneWay}"/>
+                    <local:LedIndicator Grid.Row="3" Grid.Column="2" Index="18" ByteSource="{x:Bind ViewModel.Device.CurrentColors, Mode=OneWay}"/>
+                    <local:LedIndicator Grid.Row="3" Grid.Column="1" Index="21" ByteSource="{x:Bind ViewModel.Device.CurrentColors, Mode=OneWay}"/>
                 </Grid>
             </Border>
         </StackPanel>

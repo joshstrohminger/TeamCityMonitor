@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Navigation;
 using BlinkStickUniversal;
@@ -29,6 +30,7 @@ namespace TeamCityMonitor.Views
             {
                 if (ReferenceEquals(_selectedDevice, value)) return;
                 _selectedDevice = value;
+                SelectedDevice?.BlinkAsync(Colors.White, 4, 100);
                 OnPropertyChanged();
                 OpenDevice.RaiseCanExecuteChanged();
             }

@@ -96,8 +96,8 @@ namespace TeamCityMonitor.ViewModels
         {
             if (!CanExecuteRemoveBuild()) return;
 
-            Builds.Remove(ActiveBuild);
             ActiveBuild.PropertyChanged -= BuildOnPropertyChanged;
+            Builds.Remove(ActiveBuild);
             ActiveBuild = null;
         }
 

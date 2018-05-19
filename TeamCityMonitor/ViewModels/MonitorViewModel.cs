@@ -25,7 +25,7 @@ namespace TeamCityMonitor.ViewModels
         private string _lastUpdated = "never";
         private double _brightness;
         private DateTime? _lastUpdatedTime;
-        private int _leds = -1;
+        private int _leds = 8;
         private readonly ISetupViewModel _setup;
         private readonly DispatcherTimer _autoRefreshTimer;
         private readonly DispatcherTimer _refreshAgeTimer;
@@ -101,12 +101,12 @@ namespace TeamCityMonitor.ViewModels
             if (BuildMonitors.Count == 2)
             {
                 // assume 8 LEDs
-                setup.Builds[0].AllLedIndexes = new[] {0, 1, 2, 3};
-                setup.Builds[0].FirstRunningQueuedLedIndex = 3;
-                setup.Builds[0].SecondRunningQueuedledIndex = 2;
-                setup.Builds[1].AllLedIndexes = new[] {4, 5, 6, 7};
-                setup.Builds[1].FirstRunningQueuedLedIndex = 4;
-                setup.Builds[1].SecondRunningQueuedledIndex = 5;
+                setup.Builds[0].AllLedIndexes = new[] {7, 0, 1, 2};
+                setup.Builds[0].FirstRunningQueuedLedIndex = 2;
+                setup.Builds[0].SecondRunningQueuedledIndex = 1;
+                setup.Builds[1].AllLedIndexes = new[] {3, 4, 5, 6};
+                setup.Builds[1].FirstRunningQueuedLedIndex = 3;
+                setup.Builds[1].SecondRunningQueuedledIndex = 4;
             }
 
             Refresh = new RelayCommand(async () => await ExecuteRefreshAsync(true));
@@ -142,11 +142,6 @@ namespace TeamCityMonitor.ViewModels
                 // restart the timer since we just manually refreshed
                 _autoRefreshTimer.Stop();
                 _autoRefreshTimer.Start();
-            }
-
-            if (_leds <= 0)
-            {
-                _leds = await Device.GetLedCountAsync();
             }
             
             var onColors = new Color[_leds];
@@ -207,7 +202,7 @@ namespace TeamCityMonitor.ViewModels
             {
                 if(colors[i] == Colors.Black) continue;
                 var hsv = colors[i].ToHsv();
-                hsv.V = Brightness / 100; // apply the brightness
+                hsv.V = Brightness / 100; // apply the brightness which is 0 to 100 to V which is 0 to 1
                 colors[i] = hsv.ToArgb();
             }
         }

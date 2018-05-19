@@ -43,6 +43,7 @@ namespace TeamCityMonitor.Views
         private async Task ExecuteSaveAsDefault()
         {
             App.LocalSettings.Host = _viewModel.Host;
+            App.LocalSettings.Brightness = _viewModel.Brightness;
             await App.LocalSettings.SaveBuilds(_viewModel.Builds.OfType<BuildViewModel>().ToArray());
         }
 
