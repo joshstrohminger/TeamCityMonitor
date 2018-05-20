@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Api;
+using Api.Models;
 using BlinkStickUniversal;
 using Interfaces;
 using Microsoft.Toolkit.Uwp.Helpers;
@@ -150,34 +151,40 @@ namespace TeamCityMonitor.ViewModels
             var offColors = new Color[_leds];
             var blink = false;
 
-            foreach (var buildMonitor in BuildMonitors)
+            var updates = BuildMonitors.AsParallel()
+                .Select(buildMonitor => (buildMonitor: buildMonitor, summary: buildMonitor.Api.RefreshAsync().Result))
+                .ToList();
+
+            foreach (var update in updates)
             {
-                var summary = await buildMonitor.Api.RefreshAsync();
-                var previousStatus = buildMonitor.Status.OverallStatus;
-                buildMonitor.Status.Update(summary);
-                var statusChanged = buildMonitor.Status.OverallStatus != previousStatus;
+                var status = update.buildMonitor.Status;
+                var setup = update.buildMonitor.Setup;
+                var summary = update.summary;
+                var previousStatus = status.OverallStatus;
+                status.Update(summary);
+                var statusChanged = status.OverallStatus != previousStatus;
                 blink |= statusChanged;
-                var overallStatusColor = buildMonitor.GetOverallStatusColor();
-                foreach (var i in buildMonitor.Setup.AllLedIndexes)
+                var overallStatusColor = update.buildMonitor.GetOverallStatusColor();
+                foreach (var i in setup.AllLedIndexes)
                 {
                     onColors[i] = overallStatusColor;
-                    offColors[i] = statusChanged ? buildMonitor.Setup.Idle : overallStatusColor;
+                    offColors[i] = statusChanged ? setup.Idle : overallStatusColor;
                 }
 
                 // Don't setup queued or running colors if there is an api error
-                if(buildMonitor.Status.IsApiError) continue;
+                if(status.IsApiError) continue;
 
-                var nextIndex = buildMonitor.Setup.FirstRunningQueuedLedIndex;
-                if (buildMonitor.Status.IsQueued)
+                var nextIndex = setup.FirstRunningQueuedLedIndex;
+                if (status.IsQueued)
                 {
-                    onColors[nextIndex] = buildMonitor.Setup.Queued;
-                    offColors[nextIndex] = statusChanged ? buildMonitor.Setup.Idle : buildMonitor.Setup.Queued;
-                    nextIndex = buildMonitor.Setup.SecondRunningQueuedledIndex;
+                    onColors[nextIndex] = setup.Queued;
+                    offColors[nextIndex] = statusChanged ? setup.Idle : setup.Queued;
+                    nextIndex = setup.SecondRunningQueuedledIndex;
                 }
-                if (buildMonitor.Status.IsRunning)
+                if (status.IsRunning)
                 {
-                    onColors[nextIndex] = buildMonitor.Setup.Running;
-                    offColors[nextIndex] = statusChanged ? buildMonitor.Setup.Idle : buildMonitor.Setup.Running;
+                    onColors[nextIndex] = setup.Running;
+                    offColors[nextIndex] = statusChanged ? setup.Idle : setup.Running;
                 }
             }
 
