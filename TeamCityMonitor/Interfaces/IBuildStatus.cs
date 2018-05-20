@@ -7,7 +7,9 @@ namespace TeamCityMonitor.Interfaces
     {
         Success,
         Failure,
-        Stale
+        Stale,
+        UnderInvestigation,
+        ApiError
     }
 
     public interface IBuildStatus : INotifyPropertyChanged

@@ -1,4 +1,5 @@
-﻿using Api;
+﻿using Windows.UI;
+using Api;
 using Interfaces;
 
 namespace TeamCityMonitor.Interfaces
@@ -8,5 +9,6 @@ namespace TeamCityMonitor.Interfaces
         IBuildStatus Status { get; }
         ITeamCityApi Api { get; }
         IBuildViewModel Setup { get; }
+        Color GetOverallStatusColor();
     }
 }

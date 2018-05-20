@@ -45,11 +45,11 @@ namespace TeamCityMonitor.Views
         public DeviceSelectionPage()
         {
             OpenDevice = new RelayCommand(async () => await ExecuteOpenDeviceAsync(), CanExecuteOpenDevice);
-            RefreshDevices = new RelayCommand(ExecuteRefreshDevices);
+            RefreshDevices = new RelayCommand(async () => await ExecuteRefreshDevices());
             InitializeComponent();
         }
 
-        private async void ExecuteRefreshDevices()
+        private async Task ExecuteRefreshDevices()
         {
             foreach (var device in Devices)
             {
@@ -58,9 +58,11 @@ namespace TeamCityMonitor.Views
             Devices.Clear();
 
             var devices = (await BlinkStick.FindAllAsync()).ToList<IBlinkStick>();
-#if !ARM
-            devices.Add(new BlinkStickSimulator());
-#endif
+            if (devices.Count == 0)
+            {
+                devices.Add(new BlinkStickSimulator());
+            }
+
             foreach (var device in devices)
             {
                 if (await device.OpenDeviceAsync())
@@ -88,8 +90,8 @@ namespace TeamCityMonitor.Views
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
             ApplicationViewExtensions.SetTitle(this, "Select Device");
             base.OnNavigatedTo(e);
-            ExecuteRefreshDevices();
 
+            await ExecuteRefreshDevices();
             if (SelectedDevice != null && AutoRun && e.NavigationMode == NavigationMode.New)
             {
                 await ExecuteOpenDeviceAsync();

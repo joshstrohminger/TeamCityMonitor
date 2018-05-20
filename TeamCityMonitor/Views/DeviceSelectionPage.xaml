@@ -10,7 +10,7 @@
     
     <Page.BottomAppBar>
         <CommandBar>
-            <AppBarToggleButton Label="Auto-Run" Icon="SolidStar" IsChecked="{x:Bind AutoRun, Mode=TwoWay}"/>
+            <AppBarToggleButton Label="Auto-Run" Icon="OutlineStar" IsChecked="{x:Bind AutoRun, Mode=TwoWay}"/>
             <AppBarButton Label="Refresh" Icon="Refresh" Command="{x:Bind RefreshDevices}"/>
             <AppBarButton Label="Connect" Icon="Forward" Command="{x:Bind OpenDevice}"/>
         </CommandBar>

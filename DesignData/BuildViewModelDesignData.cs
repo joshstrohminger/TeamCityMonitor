@@ -15,6 +15,7 @@ namespace DesignData
         public Color Stale => Colors[5].Color;
         public Color Idle => Colors[6].Color;
         public Color Success => Colors[0].Color;
+        public Color ApiError => Colors[7].Color;
         public int[] AllLedIndexes { get; set; }
         public int FirstRunningQueuedLedIndex { get; set; }
         public int SecondRunningQueuedledIndex { get; set; }
@@ -26,7 +27,8 @@ namespace DesignData
             new LabeledColorDesignData("Running", "#00FFFF"),
             new LabeledColorDesignData("Investigating", "#FFA500"),
             new LabeledColorDesignData("Stale", "#FF00FF"),
-            new LabeledColorDesignData("Idle", "#000000")
+            new LabeledColorDesignData("Idle", "#000000"),
+            new LabeledColorDesignData("API Error", "#FFFFFF")
         };
 
         public string Id { get; set; } = "buildidgoeshere";

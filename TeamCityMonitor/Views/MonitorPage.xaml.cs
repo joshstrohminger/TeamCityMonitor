@@ -66,6 +66,7 @@ namespace TeamCityMonitor.Views
             var setup = (ISetupViewModel)e.Parameter ?? throw new ArgumentNullException(nameof(e.Parameter));
             ViewModel = new MonitorViewModel(setup);
             DataContext = ViewModel;
+            ViewModel.Refresh.Execute(null);
         }
     }
 }

@@ -29,7 +29,7 @@ namespace TeamCityMonitor.ViewModels
         private bool _isQueued;
         private string _investigator;
         private bool _isUnderInvestigation;
-        private bool _isStale = true;
+        private bool _isStale;
         private string _errorMessage;
         private DateTime? _timeLastChanged;
         private bool _isApiError;
@@ -154,24 +154,22 @@ namespace TeamCityMonitor.ViewModels
 
             ErrorMessage = summary.ErrorMessage;
             IsApiError = !summary.IsSuccessful;
-            if(summary.IsSuccessful)
+            if (!IsApiError)
             {
                 Investigator = summary.Investigations?.Investigations?.FirstOrDefault()?.Assignee?.Name;
                 IsUnderInvestigation = !string.IsNullOrWhiteSpace(Investigator);
 
-                var lastFinishedBuild = summary.Builds.Builds.FirstOrDefault(build => build.State == "finished");
+                var lastFinishedBuild = summary.Builds?.Builds?.FirstOrDefault(build => build.State == "finished");
                 _timeLastChanged = ParseDateTime(lastFinishedBuild?.FinishDate);
                 IsSuccessful = lastFinishedBuild?.Status == "SUCCESS";
                 StatusText = lastFinishedBuild?.StatusText;
                 LastUrl = lastFinishedBuild?.WebUrl;
                 OverallUrl = summary.WebUrl;
 
-                IsQueued = summary.Builds.Builds.Any(build => build.State == "queued");
+                IsQueued = summary.Builds?.Builds?.Any(build => build.State == "queued") ?? false;
 
-                RunningUrl = summary.Builds.Builds.FirstOrDefault(build => build.State == "running")?.WebUrl;
+                RunningUrl = summary.Builds?.Builds?.FirstOrDefault(build => build.State == "running")?.WebUrl;
                 IsRunning = !string.IsNullOrWhiteSpace(RunningUrl);
-
-                OverallStatus = IsSuccessful ? Status.Success : Status.Failure;
             }
 
             RefreshTimeDependentProperties();
@@ -184,17 +182,17 @@ namespace TeamCityMonitor.ViewModels
 
         public void RefreshTimeDependentProperties()
         {
-            var now = DateTime.Now;
             if(_timeLastChanged.HasValue)
             {
-                 var age = now - _timeLastChanged.Value;
+                 var age = DateTime.Now - _timeLastChanged.Value;
                 IsStale = age > _staleCriteria;
-                if (IsStale)
-                {
-                    OverallStatus = Status.Stale;
-                }
                 LastChanged = age.ToAgeString();
             }
+            OverallStatus = IsApiError ? Status.ApiError :
+                IsUnderInvestigation ? Status.UnderInvestigation :
+                IsStale ? Status.Stale :
+                IsSuccessful ? Status.Success :
+                Status.Failure;
         }
 
         public override string ToString() => Id;

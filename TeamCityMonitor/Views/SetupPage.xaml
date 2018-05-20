@@ -42,7 +42,7 @@
     </Page.BottomAppBar>
 
     <StackPanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <TextBox Text="{Binding Host, Mode=TwoWay}" PlaceholderText="Host..."/>
+        <TextBox Text="{Binding Host, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" PlaceholderText="Host..."/>
         <StackPanel Orientation="Horizontal">
             <ListView ItemsSource="{Binding Builds, Mode=OneTime}" SelectedValue="{Binding ActiveBuild, Mode=TwoWay}" CanReorderItems="True" Width="300" MinHeight="100">
                 <ListView.ItemTemplate>

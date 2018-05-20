@@ -9,7 +9,6 @@ using Api;
 using BlinkStickUniversal;
 using Interfaces;
 using Microsoft.Toolkit.Uwp.Helpers;
-using Microsoft.Toolkit.Uwp.UI.Animations.Behaviors;
 using MVVM;
 using TeamCityMonitor.Interfaces;
 using TeamCityMonitor.Models;
@@ -83,6 +82,8 @@ namespace TeamCityMonitor.ViewModels
 
         #endregion
 
+        #region Construction
+
         public MonitorViewModel(ISetupViewModel setup)
         {
             _setup = setup ?? throw new ArgumentNullException(nameof(setup));
@@ -92,8 +93,7 @@ namespace TeamCityMonitor.ViewModels
             Brightness = setup.Brightness;
             BuildMonitors = new ReadOnlyCollection<IBuildMonitor>(setup.Builds.Select((build,i) =>
                     new BuildMonitor(new BuildStatusViewModel(build),
-                        //new TeamCityApi(setup.Host, build.Id),
-                        new TeamCityApiSimulator(setup.Host, build.Id, i),
+                        TeamCityApiFactory.Create(Host, build.Id, i),
                         build))
                 .ToList<IBuildMonitor>());
 
@@ -118,9 +118,11 @@ namespace TeamCityMonitor.ViewModels
             _refreshAgeTimer = new DispatcherTimer {Interval = TimeSpan.FromSeconds(1)};
             _refreshAgeTimer.Tick += RefreshAgeTimerOnTick;
             _refreshAgeTimer.Start();
-
-            ExecuteRefreshAsync(false);
         }
+
+        #endregion
+
+        #region Methods
 
         private void RefreshAgeTimerOnTick(object sender, object e)
         {
@@ -152,36 +154,30 @@ namespace TeamCityMonitor.ViewModels
             {
                 var summary = await buildMonitor.Api.RefreshAsync();
                 var previousStatus = buildMonitor.Status.OverallStatus;
-
                 buildMonitor.Status.Update(summary);
-
-                var newStatus = buildMonitor.Status.OverallStatus;
-                var overallStatusColor = buildMonitor.Status.IsUnderInvestigation ? buildMonitor.Setup.Investigating
-                    : newStatus == Status.Stale ? buildMonitor.Setup.Stale
-                    : newStatus == Status.Success ? buildMonitor.Setup.Success
-                    : buildMonitor.Setup.Failure;
+                var statusChanged = buildMonitor.Status.OverallStatus != previousStatus;
+                blink |= statusChanged;
+                var overallStatusColor = buildMonitor.GetOverallStatusColor();
                 foreach (var i in buildMonitor.Setup.AllLedIndexes)
                 {
                     onColors[i] = overallStatusColor;
-                    offColors[i] = overallStatusColor;
-                    if (previousStatus != newStatus)
-                    {
-                        offColors[i] = Colors.Black;
-                        blink = true;
-                    }
+                    offColors[i] = statusChanged ? buildMonitor.Setup.Idle : overallStatusColor;
                 }
+
+                // Don't setup queued or running colors if there is an api error
+                if(buildMonitor.Status.IsApiError) continue;
 
                 var nextIndex = buildMonitor.Setup.FirstRunningQueuedLedIndex;
                 if (buildMonitor.Status.IsQueued)
                 {
                     onColors[nextIndex] = buildMonitor.Setup.Queued;
-                    offColors[nextIndex] = previousStatus != newStatus ? Colors.Black : buildMonitor.Setup.Queued;
+                    offColors[nextIndex] = statusChanged ? buildMonitor.Setup.Idle : buildMonitor.Setup.Queued;
                     nextIndex = buildMonitor.Setup.SecondRunningQueuedledIndex;
                 }
                 if (buildMonitor.Status.IsRunning)
                 {
                     onColors[nextIndex] = buildMonitor.Setup.Running;
-                    offColors[nextIndex] = previousStatus != newStatus ? Colors.Black : buildMonitor.Setup.Running;
+                    offColors[nextIndex] = statusChanged ? buildMonitor.Setup.Idle : buildMonitor.Setup.Running;
                 }
             }
 
@@ -212,5 +208,7 @@ namespace TeamCityMonitor.ViewModels
             _refreshAgeTimer.Stop();
             _autoRefreshTimer.Stop();
         }
+
+        #endregion
     }
 }

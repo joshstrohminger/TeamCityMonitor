@@ -16,7 +16,7 @@ namespace Api
 
         public string BuildTypeId { get; }
 
-        public TeamCityApiSimulator(string host, string buildTypeId, int offset)
+        public TeamCityApiSimulator(string buildTypeId, int offset)
         {
             _offset = offset;
             BuildTypeId = buildTypeId;
