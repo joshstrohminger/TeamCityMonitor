@@ -151,6 +151,15 @@ namespace TeamCityMonitor.ViewModels
             var offColors = new Color[_leds];
             var blink = false;
 
+            foreach (var buildMonitor in BuildMonitors)
+            {
+                foreach (var i in buildMonitor.Setup.AllLedIndexes)
+                {
+                    onColors[i] = buildMonitor.Setup.ApiCall;
+                }
+            }
+            await Device.SetColorsAsync(onColors);
+
             var updates = BuildMonitors.AsParallel()
                 .Select(buildMonitor => (buildMonitor: buildMonitor, summary: buildMonitor.Api.RefreshAsync().Result))
                 .ToList();

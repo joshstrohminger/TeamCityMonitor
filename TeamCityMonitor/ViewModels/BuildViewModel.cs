@@ -14,21 +14,23 @@ namespace TeamCityMonitor.ViewModels
             new LabeledColor("Success", "#00FF00"),
             new LabeledColor("Failure", "#FF0000"),
             new LabeledColor("Queued", "#FFFF00"),
-            new LabeledColor("Running", "#00FFFF"),
-            new LabeledColor("Investigating", "#FFA500"),
+            new LabeledColor("Running", "#0000FF"),
             new LabeledColor("Stale", "#FF00FF"),
             new LabeledColor("Idle", "#000000"),
-            new LabeledColor("API Error", "#FFFFFF")
+            new LabeledColor("API Call", "#00FFFF"),
+            new LabeledColor("API Error", "#FFFFFF"),
+            new LabeledColor("Investigating", "#FFA500"),
         };
 
         public Color Success => Colors[0].Color;
         public Color Failure => Colors[1].Color;
         public Color Queued => Colors[2].Color;
         public Color Running => Colors[3].Color;
-        public Color Investigating => Colors[4].Color;
-        public Color Stale => Colors[5].Color;
-        public Color Idle => Colors[6].Color;
+        public Color Stale => Colors[4].Color;
+        public Color Idle => Colors[5].Color;
+        public Color ApiCall => Colors[6].Color;
         public Color ApiError => Colors[7].Color;
+        public Color Investigating => Colors[8].Color;
         public int[] AllLedIndexes { get; set; }
         public int FirstRunningQueuedLedIndex { get; set; }
         public int SecondRunningQueuedledIndex { get; set; }
