@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Api.Models;
@@ -11,6 +9,7 @@ namespace Api
     public class TeamCityApiSimulator : ITeamCityApi
     {
         private int _offset;
+        private readonly Random _random = new Random();
 
         private readonly BuildTypeStatusSummary[] _statuses;
 
@@ -90,9 +89,9 @@ namespace Api
         {
             return await Task.FromResult(Refresh());
         }
-
         public BuildTypeStatusSummary Refresh()
         {
+            Thread.Sleep(_random.Next(100,600));
             return _statuses[(_offset++/2) % _statuses.Length];
         }
     }

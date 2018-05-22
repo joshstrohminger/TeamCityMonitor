@@ -30,7 +30,17 @@ namespace TeamCityMonitor.Views
             {
                 if (ReferenceEquals(_selectedDevice, value)) return;
                 _selectedDevice = value;
-                SelectedDevice?.BlinkAsync(Colors.White, 4, 100);
+                SelectedDevice?.BlinkAsync(new []
+                {
+                    "#FF00FF",
+                    "#0000FF",
+                    "#00FFFF",
+                    "#00FF00",
+                    "#FFFF00",
+                    "#FF0000",
+                    "#FFFFFF",
+                    "#FFFFFF"
+                }.Select(ColorExtensions.FromString).ToArray(), 4, 100);
                 OnPropertyChanged();
                 OpenDevice.RaiseCanExecuteChanged();
             }
