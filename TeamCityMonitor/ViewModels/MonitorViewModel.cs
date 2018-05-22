@@ -158,6 +158,7 @@ namespace TeamCityMonitor.ViewModels
                     onColors[i] = buildMonitor.Setup.ApiCall;
                 }
             }
+            Scale(ref onColors);
             await Device.SetColorsAsync(onColors);
 
             var updates = BuildMonitors.AsParallel()

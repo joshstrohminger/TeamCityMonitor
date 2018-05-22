@@ -52,6 +52,8 @@ namespace TeamCityMonitor.Views
 
         private async void NavigateBack()
         {
+            ((App)Application.Current).Button1Pressed -= OnManualRefreshHardwareButtonPressed;
+            ((App)Application.Current).Button2Pressed -= OnManualRefreshHardwareButtonPressed;
             ViewModel.Dispose();
             await ViewModel.Device.TurnOffAsync();
             Frame.GoBack();
@@ -67,6 +69,13 @@ namespace TeamCityMonitor.Views
             ViewModel = new MonitorViewModel(setup);
             DataContext = ViewModel;
             ViewModel.Refresh.Execute(null);
+            ((App)Application.Current).Button1Pressed += OnManualRefreshHardwareButtonPressed;
+            ((App)Application.Current).Button2Pressed += OnManualRefreshHardwareButtonPressed;
+        }
+
+        private void OnManualRefreshHardwareButtonPressed(object sender, EventArgs e)
+        {
+            Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => ViewModel.Refresh.Execute(null));
         }
     }
 }

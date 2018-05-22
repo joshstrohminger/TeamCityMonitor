@@ -1,30 +1,16 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
 using System.Xml;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.Foundation;
+using Windows.Devices.Gpio;
 using Windows.Foundation.Collections;
 using Windows.Storage;
-using Windows.UI;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using BlinkStickUniversal;
-using Interfaces;
-using Microsoft.Toolkit.Uwp.Helpers;
 using TeamCityMonitor.ViewModels;
 
 namespace TeamCityMonitor
@@ -40,8 +26,8 @@ namespace TeamCityMonitor
         /// </summary>
         public App()
         {
-            this.InitializeComponent();
-            this.Suspending += OnSuspending;
+            InitializeComponent();
+            Suspending += OnSuspending;
         }
 
         public static class LocalSettings
@@ -130,6 +116,51 @@ namespace TeamCityMonitor
                 }
                 // Ensure the current window is active
                 Window.Current.Activate();
+            }
+            
+
+            var gpio = GpioController.GetDefault();
+            if (gpio is null) return;
+
+            _button1Listener = new ButtonListener(gpio, 12);
+            _button2Listener = new ButtonListener(gpio, 16);
+        }
+
+        private ButtonListener _button1Listener;
+        private ButtonListener _button2Listener;
+
+        public event EventHandler Button1Pressed
+        {
+            add
+            {
+                if (_button1Listener != null)
+                {
+                    _button1Listener.Pressed += value;
+                }
+            }
+            remove
+            {
+                if (_button1Listener != null)
+                {
+                    _button1Listener.Pressed -= value;
+                }
+            }
+        }
+        public event EventHandler Button2Pressed
+        {
+            add
+            {
+                if (_button2Listener != null)
+                {
+                    _button2Listener.Pressed += value;
+                }
+            }
+            remove
+            {
+                if (_button2Listener != null)
+                {
+                    _button2Listener.Pressed -= value;
+                }
             }
         }
 
