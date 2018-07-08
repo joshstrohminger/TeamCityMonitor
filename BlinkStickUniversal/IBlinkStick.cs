@@ -9,6 +9,8 @@ namespace BlinkStickUniversal
     {
         event BlinkStick.ErrorHandler OnError;
 
+        bool Watch { get; set; }
+
         ObservableCollection<byte> CurrentColors { get; }
 
         /// <value><c>true</c> if connected; otherwise, <c>false</c>.</value>

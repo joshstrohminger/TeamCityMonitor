@@ -20,7 +20,9 @@ namespace BlinkStickUniversal
         protected const int VendorId = 0x20A0;
         protected const int ProductId = 0x41E5;
 
+        private static readonly string Selector = HidDevice.GetDeviceSelector(UsagePage, UsageId, VendorId, ProductId);
         private readonly DeviceInformation _info;
+        private DeviceWatcher _watcher;
         private HidDevice _device;
         private bool _connected;
         private bool _stopped;
@@ -36,6 +38,50 @@ namespace BlinkStickUniversal
         #endregion Events
 
         #region Device Properties
+
+        public bool Watch
+        {
+            get => _watcher != null;
+            set
+            {
+                if (value == Watch) return;
+                if (_watcher is null)
+                {
+                    //todo Seems like the selector or other constructors could be used to include the device ID so we wouldn't have to filter out other devices?
+                    _watcher = DeviceInformation.CreateWatcher(Selector);
+                    _watcher.Added += WatcherOnAdded;
+                    _watcher.Removed += WatcherOnRemoved;
+                    _watcher.Updated += WatcherOnUpdated;
+                    _watcher.Start();
+                }
+                else
+                {
+                    _watcher.Stop();
+                    _watcher.Added -= WatcherOnAdded;
+                    _watcher.Removed -= WatcherOnRemoved;
+                    _watcher.Updated -= WatcherOnUpdated;
+                    _watcher = null;
+                }
+            }
+        }
+
+        private void WatcherOnUpdated(DeviceWatcher sender, DeviceInformationUpdate args)
+        {
+            // ignored
+        }
+
+        private void WatcherOnRemoved(DeviceWatcher sender, DeviceInformationUpdate args)
+        {
+            if (sender.Status != DeviceWatcherStatus.EnumerationCompleted || _info?.Id != args.Id || _info?.Kind != args.Kind) return;
+            Connected = false;
+        }
+
+        private void WatcherOnAdded(DeviceWatcher sender, DeviceInformation args)
+        {
+            if (_info is null || sender.Status != DeviceWatcherStatus.EnumerationCompleted) return;
+            Connected = true;
+            OpenCurrentDevice();
+        }
 
         private HidDevice Device
         {
@@ -937,8 +983,7 @@ namespace BlinkStickUniversal
         /// <returns>An array of BlinkStick devices</returns>
         public static async Task<BlinkStick[]> FindAllAsync()
         {
-            var selector = HidDevice.GetDeviceSelector(UsagePage, UsageId, VendorId, ProductId);
-            var deviceInformationList = await DeviceInformation.FindAllAsync(selector);
+            var deviceInformationList = await DeviceInformation.FindAllAsync(Selector);
             return deviceInformationList.Select(info => new BlinkStick(info)).ToArray();
         }
 

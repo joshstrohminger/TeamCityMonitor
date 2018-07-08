@@ -15,6 +15,8 @@ namespace DesignData
         private int _leds = 8;
         public event BlinkStick.ErrorHandler OnError;
 
+        public bool Watch { get; set; }
+
         public ObservableCollection<byte> CurrentColors { get; } = new ObservableCollection<byte>(Enumerable.Repeat((byte)0, 8 * 3));
         public bool Connected
         {

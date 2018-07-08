@@ -56,6 +56,7 @@ namespace TeamCityMonitor.Views
             ((App)Application.Current).Button2Pressed -= OnManualRefreshHardwareButtonPressed;
             ViewModel.Dispose();
             await ViewModel.Device.TurnOffAsync();
+            ViewModel.Device.Watch = false;
             Frame.GoBack();
         }
 
@@ -68,6 +69,7 @@ namespace TeamCityMonitor.Views
             var setup = (ISetupViewModel)e.Parameter ?? throw new ArgumentNullException(nameof(e.Parameter));
             ViewModel = new MonitorViewModel(setup);
             DataContext = ViewModel;
+            ViewModel.Device.Watch = true;
             ViewModel.Refresh.Execute(null);
             ((App)Application.Current).Button1Pressed += OnManualRefreshHardwareButtonPressed;
             ((App)Application.Current).Button2Pressed += OnManualRefreshHardwareButtonPressed;
