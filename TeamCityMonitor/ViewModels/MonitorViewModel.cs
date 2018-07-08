@@ -99,15 +99,18 @@ namespace TeamCityMonitor.ViewModels
                 .ToList<IBuildMonitor>());
 
             // todo make this dynamic instead of a special case
-            if (BuildMonitors.Count == 2)
+            if (BuildMonitors.Count == 1)
+            {
+                setup.Builds[0].AllLedIndexes = new[] { 0, 1, 2, 3, 4, 5, 6, 7 };
+                setup.Builds[0].RunningQueuedLedIndex = 2;
+            }
+            else if (BuildMonitors.Count == 2)
             {
                 // assume 8 LEDs
                 setup.Builds[0].AllLedIndexes = new[] {7, 0, 1, 2};
-                setup.Builds[0].FirstRunningQueuedLedIndex = 2;
-                setup.Builds[0].SecondRunningQueuedledIndex = 1;
+                setup.Builds[0].RunningQueuedLedIndex = 2;
                 setup.Builds[1].AllLedIndexes = new[] {3, 4, 5, 6};
-                setup.Builds[1].FirstRunningQueuedLedIndex = 3;
-                setup.Builds[1].SecondRunningQueuedledIndex = 4;
+                setup.Builds[1].RunningQueuedLedIndex = 3;
             }
 
             Refresh = new RelayCommand(async () => await ExecuteRefreshAsync(true));
@@ -184,17 +187,15 @@ namespace TeamCityMonitor.ViewModels
                 // Don't setup queued or running colors if there is an api error
                 if(status.IsApiError) continue;
 
-                var nextIndex = setup.FirstRunningQueuedLedIndex;
-                if (status.IsQueued)
-                {
-                    onColors[nextIndex] = setup.Queued;
-                    offColors[nextIndex] = statusChanged ? setup.Idle : setup.Queued;
-                    nextIndex = setup.SecondRunningQueuedledIndex;
-                }
                 if (status.IsRunning)
                 {
-                    onColors[nextIndex] = setup.Running;
-                    offColors[nextIndex] = statusChanged ? setup.Idle : setup.Running;
+                    onColors[setup.RunningQueuedLedIndex] = setup.Running;
+                    offColors[setup.RunningQueuedLedIndex] = statusChanged ? setup.Idle : setup.Running;
+                }
+                else if (status.IsQueued)
+                {
+                    onColors[setup.RunningQueuedLedIndex] = setup.Queued;
+                    offColors[setup.RunningQueuedLedIndex] = statusChanged ? setup.Idle : setup.Queued;
                 }
             }
 

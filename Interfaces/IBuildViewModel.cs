@@ -18,7 +18,6 @@ namespace Interfaces
         string Id { get; set; }
         string Name { get; set; }
         int[] AllLedIndexes { get; set; }
-        int FirstRunningQueuedLedIndex { get; set; }
-        int SecondRunningQueuedledIndex { get; set; }
+        int RunningQueuedLedIndex { get; set; }
     }
 }

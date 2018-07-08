@@ -32,8 +32,7 @@ namespace TeamCityMonitor.ViewModels
         public Color ApiError => Colors[7].Color;
         public Color Investigating => Colors[8].Color;
         public int[] AllLedIndexes { get; set; }
-        public int FirstRunningQueuedLedIndex { get; set; }
-        public int SecondRunningQueuedledIndex { get; set; }
+        public int RunningQueuedLedIndex { get; set; }
 
         public string Id
         {

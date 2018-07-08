@@ -188,6 +188,10 @@ namespace TeamCityMonitor.ViewModels
                 IsStale = age > _staleCriteria;
                 LastChanged = age.ToAgeString();
             }
+            else
+            {
+                LastChanged = "never";
+            }
             OverallStatus = IsApiError ? Status.ApiError :
                 IsUnderInvestigation ? Status.UnderInvestigation :
                 IsStale ? Status.Stale :
