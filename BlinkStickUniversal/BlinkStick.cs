@@ -1026,6 +1026,8 @@ namespace BlinkStickUniversal
 
         private async Task SetFeatureAsync(byte[] buffer)
         {
+            if (!Connected) return;
+
             var featureReport = Device.CreateFeatureReport(buffer[0]);
 
             var dataWriter = new DataWriter();
@@ -1058,6 +1060,8 @@ namespace BlinkStickUniversal
 
         private async Task<byte[]> GetFeatureAsync(ushort reportId)
         {
+            if (!Connected) return null;
+
             var featureReport = await Device.GetFeatureReportAsync(reportId);
             var dataReader = DataReader.FromBuffer(featureReport.Data);
             var result = new byte[featureReport.Data.Length];
