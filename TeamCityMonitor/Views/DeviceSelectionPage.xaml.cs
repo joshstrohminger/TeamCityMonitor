@@ -22,6 +22,7 @@ namespace TeamCityMonitor.Views
     {
         private IBlinkStick _selectedDevice;
         private bool _autoRun = App.LocalSettings.AutoRun;
+        private Task _selectedDeviceBlinkTask;
 
         public IBlinkStick SelectedDevice
         {
@@ -30,7 +31,7 @@ namespace TeamCityMonitor.Views
             {
                 if (ReferenceEquals(_selectedDevice, value)) return;
                 _selectedDevice = value;
-                SelectedDevice?.BlinkAsync(new []
+                _selectedDeviceBlinkTask = SelectedDevice?.BlinkAsync(new []
                 {
                     "#FF00FF",
                     "#0000FF",
@@ -92,6 +93,7 @@ namespace TeamCityMonitor.Views
         private async Task ExecuteOpenDeviceAsync()
         {
             if (!CanExecuteOpenDevice()) return;
+            await _selectedDeviceBlinkTask;
             await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => Frame.Navigate(typeof(SetupPage), SelectedDevice));
         }
 
