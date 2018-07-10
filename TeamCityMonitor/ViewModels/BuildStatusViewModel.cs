@@ -194,9 +194,9 @@ namespace TeamCityMonitor.ViewModels
             }
             OverallStatus = IsApiError ? Status.ApiError :
                 IsUnderInvestigation ? Status.UnderInvestigation :
+                !IsSuccessful ? Status.Failure :
                 IsStale ? Status.Stale :
-                IsSuccessful ? Status.Success :
-                Status.Failure;
+                Status.Success;
         }
 
         public override string ToString() => Id;
