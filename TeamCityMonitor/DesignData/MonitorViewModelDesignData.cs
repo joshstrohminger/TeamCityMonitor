@@ -27,6 +27,7 @@ namespace TeamCityMonitor.DesignData
         public bool AutoRefresh { get; set; } = true;
         public double Brightness { get; set; } = 80;
         public string LastUpdated { get; } = "never";
+        public DateTime? LastUpdatedTime { get; } = DateTime.Now;
 
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

@@ -39,6 +39,19 @@ namespace TeamCityMonitor.ViewModels
         public IReadOnlyCollection<IBuildMonitor> BuildMonitors { get; }
         public IRelayCommand Refresh { get; }
 
+        public DateTime? LastUpdatedTime
+        {
+            get => _lastUpdatedTime;
+            private set
+            {
+                if (_lastUpdatedTime != value)
+                {
+                    _lastUpdatedTime = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         public string LastUpdated
         {
             get => _lastUpdated;
@@ -135,9 +148,9 @@ namespace TeamCityMonitor.ViewModels
                 monitor.Status.RefreshTimeDependentProperties();
             }
 
-            if (_lastUpdatedTime.HasValue)
+            if (LastUpdatedTime.HasValue)
             {
-                LastUpdated = "Updated  " + (DateTime.Now - _lastUpdatedTime.Value).ToAgeString();
+                LastUpdated = "Updated  " + (DateTime.Now - LastUpdatedTime.Value).ToAgeString();
             }
         }
 
@@ -207,7 +220,7 @@ namespace TeamCityMonitor.ViewModels
             }
             await Device.SetColorsAsync(onColors);
 
-            _lastUpdatedTime = DateTime.Now;
+            LastUpdatedTime = DateTime.Now;
         }
 
         private void Scale(ref Color[] colors)

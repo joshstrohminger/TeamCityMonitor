@@ -15,5 +15,6 @@ namespace TeamCityMonitor.Interfaces
         bool AutoRefresh { get; set; }
         double Brightness { get; set; }
         string LastUpdated { get; }
+        DateTime? LastUpdatedTime { get; }
     }
 }
