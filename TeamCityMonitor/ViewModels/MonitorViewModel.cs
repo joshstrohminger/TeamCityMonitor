@@ -25,6 +25,7 @@ namespace TeamCityMonitor.ViewModels
         private string _lastUpdated = "never";
         private double _brightness;
         private DateTime? _lastUpdatedTime;
+        private DateTime? _time;
         private int _leds = 8;
         private readonly ISetupViewModel _setup;
         private readonly DispatcherTimer _autoRefreshTimer;
@@ -39,14 +40,14 @@ namespace TeamCityMonitor.ViewModels
         public IReadOnlyCollection<IBuildMonitor> BuildMonitors { get; }
         public IRelayCommand Refresh { get; }
 
-        public DateTime? LastUpdatedTime
+        public DateTime? Time
         {
-            get => _lastUpdatedTime;
+            get => _time;
             private set
             {
-                if (_lastUpdatedTime != value)
+                if (_time != value)
                 {
-                    _lastUpdatedTime = value;
+                    _time = value;
                     OnPropertyChanged();
                 }
             }
@@ -148,10 +149,12 @@ namespace TeamCityMonitor.ViewModels
                 monitor.Status.RefreshTimeDependentProperties();
             }
 
-            if (LastUpdatedTime.HasValue)
+            if (_lastUpdatedTime.HasValue)
             {
-                LastUpdated = "Updated  " + (DateTime.Now - LastUpdatedTime.Value).ToAgeString();
+                LastUpdated = "Updated  " + (DateTime.Now - _lastUpdatedTime.Value).ToAgeString();
             }
+
+            Time = DateTime.Now;
         }
 
         private async Task ExecuteRefreshAsync(bool manualRefresh)
@@ -220,7 +223,7 @@ namespace TeamCityMonitor.ViewModels
             }
             await Device.SetColorsAsync(onColors);
 
-            LastUpdatedTime = DateTime.Now;
+            _lastUpdatedTime = DateTime.Now;
         }
 
         private void Scale(ref Color[] colors)
