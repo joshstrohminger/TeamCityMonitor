@@ -25,7 +25,7 @@ namespace DesignData
             new LabeledColorDesignData("Failure", "#FF0000"),
             new LabeledColorDesignData("Queued", "#FFFF00"),
             new LabeledColorDesignData("Running", "#0000FF"),
-            new LabeledColorDesignData("Stale", "#FF00FF"),
+            new LabeledColorDesignData("Stale", "#5E1C5E"),
             new LabeledColorDesignData("Idle", "#000000"),
             new LabeledColorDesignData("API Call", "#00FFFF"),
             new LabeledColorDesignData("API Error", "#FFFFFF"),

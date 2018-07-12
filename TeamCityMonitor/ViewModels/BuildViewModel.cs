@@ -15,7 +15,7 @@ namespace TeamCityMonitor.ViewModels
             new LabeledColor("Failure", "#FF0000"),
             new LabeledColor("Queued", "#FFFF00"),
             new LabeledColor("Running", "#0000FF"),
-            new LabeledColor("Stale", "#FF00FF"),
+            new LabeledColor("Stale", "#5E1C5E"),
             new LabeledColor("Idle", "#000000"),
             new LabeledColor("API Call", "#00FFFF"),
             new LabeledColor("API Error", "#FFFFFF"),
