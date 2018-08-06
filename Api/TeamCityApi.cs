@@ -10,6 +10,7 @@ namespace Api
     {
         private readonly RestClient _client;
         private readonly RestRequest _request;
+        private const ushort NumberOfBuildsToQuery = 100;
 
         public string BuildTypeId { get; }
 
@@ -18,7 +19,7 @@ namespace Api
             if (string.IsNullOrWhiteSpace(host)) throw new ArgumentException(nameof(host));
             if (string.IsNullOrWhiteSpace(buildTypeId)) throw new ArgumentException(nameof(buildTypeId));
             BuildTypeId = buildTypeId;
-            _client = new RestClient($"http://{host}/guestAuth/app/rest/buildTypes/id:{BuildTypeId}?fields=name,webUrl,investigations($locator(count:1),count,investigation(assignee(name))),builds($locator(defaultFilter:false,canceled:false,failedToStart:false,personal:any,count:8,state:any),build(state,number,status,statusText,webUrl,finishDate))");
+            _client = new RestClient($"http://{host}/guestAuth/app/rest/buildTypes/id:{BuildTypeId}?fields=name,webUrl,investigations($locator(count:1),count,investigation(assignee(name))),builds($locator(defaultFilter:false,canceled:false,failedToStart:false,personal:any,count:{NumberOfBuildsToQuery},state:any),build(state,number,status,statusText,webUrl,finishDate))");
             _request = new RestRequest();
             _request.AddHeader("Accept", "application/json");
         }
