@@ -156,7 +156,7 @@ namespace TeamCityMonitor.ViewModels
             IsApiError = !summary.IsSuccessful;
             if (!IsApiError)
             {
-                Investigator = summary.Investigations?.Investigations?.FirstOrDefault()?.Assignee?.Name;
+                Investigator = summary.Investigations?.Investigation?.FirstOrDefault()?.Assignee?.Name;
                 IsUnderInvestigation = !string.IsNullOrWhiteSpace(Investigator);
 
                 var lastFinishedBuild = summary.Builds?.Builds?.FirstOrDefault(build => build.State == "finished");

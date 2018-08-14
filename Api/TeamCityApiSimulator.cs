@@ -71,7 +71,7 @@ namespace Api
                 new BuildTypeStatusSummary
                 {
                     Builds = new BuildCollection{Builds = new List<Build>{new Build{StatusText = "Eight - Investigating", Status = "FAILED", State = "finished", FinishDate = DateTime.Now.AddHours(-1).ToString("yyyyMMdd'T'HHmmsszzzz") }}},
-                    Investigations = new InvestigationCollection{Count = 1, Investigations = new List<Investigation>{new Investigation{Assignee = new Assignee{Name = "Someone's name"}}}}
+                    Investigations = new InvestigationCollection{Count = 1, Investigation = new List<Investigation>{new Investigation{Assignee = new Assignee{Name = "Someone's name"}}}}
                 },
                 new BuildTypeStatusSummary
                 {
